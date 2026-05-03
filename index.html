@@ -3,95 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Froggie Goals Hub 🐸</title>
+    <title>Froggie Focus Hub 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="backupBanner" class="backup-banner">
-        <span>🌸 Ribbit! Remember to download a backup to keep your achievements safe! 🐸</span>
+        <span>🌸 Ribbit! Backup your achievements to keep them safe! 🐸</span>
         <button id="bannerClose" class="btn-close-banner">×</button>
     </div>
 
     <div class="container">
         <header class="header">
-            <h1>✨ 🐸 Froggie Goals Hub 🐸 ✨</h1>
+            <h1>Froggie Focus Hub 🐸</h1>
             <p class="date" id="currentDate"></p>
         </header>
 
-        <!-- Growing Lily Pad Animation -->
+        <!-- Focus Timer Lily Pad -->
         <div class="pond-area">
-            <div id="magicLilyPad" class="lily-pad-visual">🐸</div>
+            <div id="magicLilyPad" class="lily-pad-visual">
+                <div class="timer-display">
+                    <span id="timerText">25:00</span>
+                    <div class="timer-controls">
+                        <button id="startTimer" aria-label="Start Timer">▶️</button>
+                        <button id="resetTimer" aria-label="Reset Timer">🔄</button>
+                    </div>
+                </div>
+                <span class="frog-emoji">🐸</span>
+            </div>
         </div>
 
         <main class="main-content">
-            <!-- Center Section -->
-            <section class="daily-goals">
+            <!-- All Sections Centered in a Single Column -->
+            <section class="goal-box daily-goals">
                 <div class="section-header">
-                    <h2>🐸 Today's Hops</h2>
+                    <h2>Today's Hops</h2>
                     <div class="progress-container">
                         <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
-                        <span class="progress-text" id="dailyProgressText">0%</span>
+                        <span id="dailyProgressText">0%</span>
                     </div>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="dailyInput" class="goal-input" placeholder="New hop for today..." autocomplete="off">
-                    <button class="btn btn-primary" id="addDailyBtn">Add Hop 🌸</button>
+                    <input type="text" id="dailyInput" class="goal-input" placeholder="Next hop? (Ctrl + Enter)">
+                    <button class="btn btn-primary" id="addDailyBtn">Add Hop</button>
                 </div>
                 <ul class="goals-list" id="dailyList"></ul>
             </section>
 
-            <!-- Right Sidebar -->
-            <aside class="sidebar">
-                <section class="monthly-goals">
-                    <h3>🍄 Monthly</h3>
-                    <div class="input-group compact">
-                        <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
-                        <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
-                    </div>
-                    <ul class="goals-list compact" id="monthlyList"></ul>
-                </section>
+            <section class="goal-box monthly-goals">
+                <h3>🍄 Monthly</h3>
+                <div class="input-group">
+                    <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
+                    <button class="btn btn-primary" id="addMonthlyBtn">+</button>
+                </div>
+                <ul class="goals-list" id="monthlyList"></ul>
+            </section>
 
-                <section class="yearly-goals">
-                    <h3>🌿 Yearly</h3>
-                    <div class="input-group compact">
-                        <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
-                        <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
-                    </div>
-                    <ul class="goals-list compact" id="yearlyList"></ul>
-                </section>
-            </aside>
+            <section class="goal-box yearly-goals">
+                <h3>🌿 Yearly</h3>
+                <div class="input-group">
+                    <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
+                    <button class="btn btn-primary" id="addYearlyBtn">+</button>
+                </div>
+                <ul class="goals-list" id="yearlyList"></ul>
+            </section>
         </main>
     </div>
 
-    <!-- Centered Collapsible History -->
-    <div class="history-footer collapsed" id="historyFooter">
+    <!-- Achievement Pond -->
+    <footer class="history-footer collapsed" id="historyFooter">
         <div class="history-header" id="historyToggle">
             <div class="history-title-group">
-                <h3>👑 Achievement Pond <span id="historyChevron">▼</span></h3>
-                <button id="clearHistoryBtn" class="btn-text-only">Clear All</button>
+                <h3>Achievement Pond <span id="historyChevron">▼</span></h3>
+                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
             </div>
             <div class="data-mgmt">
-                <button id="exportBtn" class="btn-data">💾 Backup</button>
-                <label for="importFile" class="btn-data">📂 Restore</label>
+                <button id="exportBtn" class="btn-util">Backup</button>
+                <label for="importFile" class="btn-util" role="button" tabindex="0">Restore</label>
                 <input type="file" id="importFile" accept=".json" style="display:none;">
             </div>
         </div>
         
         <div class="history-content" id="historyContent">
-            <div class="history-section">
-                <h4>Daily Hops</h4>
-                <div id="dailyHistoryList" class="history-grid"></div>
+            <div class="history-section streak-highlight">
+                <h4>🔥 My Streak</h4>
+                <div class="streak-card"><span id="streakCount">0</span><small>Days</small></div>
             </div>
             <div class="history-section">
-                <h4>Monthly Hops</h4>
-                <div id="monthlyHistoryList" class="history-grid"></div>
+                <h4>Daily</h4>
+                <div id="dailyHistoryList"></div>
             </div>
             <div class="history-section">
-                <h4>Yearly Hops</h4>
-                <div id="yearlyHistoryList" class="history-grid"></div>
+                <h4>Monthly</h4>
+                <div id="monthlyHistoryList"></div>
+            </div>
+            <div class="history-section">
+                <h4>Yearly</h4>
+                <div id="yearlyHistoryList"></div>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
