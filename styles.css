@@ -1,32 +1,59 @@
 :root {
-    --frog: #9ed5a0;
-    --dark-frog: #67a36a;
-    --pink: #ffc2d1;
-    --bg: #ffe5ec;
-    --txt: #5d4a4a;
+    --primary: #4f46e5;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --green: #10b981;
+    --dark-panel: #1e1e2e;
 }
 
-body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--txt); margin: 0; padding-bottom: 120px; overflow-x: hidden; }
+body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-/* Side Drawer */
-.drawer-toggle { position: fixed; left: 20px; top: 60px; width: 50px; height: 50px; border-radius: 50%; background: var(--frog); border: 2px solid white; cursor: pointer; z-index: 1100; font-size: 1.5rem; }
-.side-drawer { position: fixed; left: -280px; top: 0; width: 240px; height: 100%; background: white; border-right: 4px solid var(--frog); z-index: 1200; transition: 0.3s; padding: 20px; }
-.side-drawer.open { left: 0; }
+/* --- Backup Banner --- */
+.backup-banner { background: var(--primary); color: white; text-align: center; padding: 8px 20px; font-size: 0.8rem; display: flex; justify-content: center; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 1100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.banner-actions { display: flex; align-items: center; gap: 10px; }
+.btn-banner { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem; transition: 0.2s; }
+.btn-banner:hover { background: white; color: var(--primary); }
+.btn-close-banner { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; opacity: 0.7; line-height: 1; }
+.btn-close-banner:hover { opacity: 1; }
+.hidden { display: none !important; }
 
-/* Progress Pond UI */
-.container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: center; }
-.pond-card { background: white; border-radius: 20px; border: 2px solid var(--frog); padding: 20px; box-shadow: 6px 6px 0px var(--pink); margin-bottom: 20px; text-align: left; }
-.input-row { display: flex; gap: 8px; margin-bottom: 10px; }
-.btn-pond { background: var(--frog); color: white; border-radius: 10px; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; }
+/* --- Goal UI --- */
+.main-content { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+section { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.input-group { display: flex; gap: 10px; margin: 15px 0; }
+.goal-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+.btn { cursor: pointer; border: none; border-radius: 6px; padding: 10px; font-weight: bold; }
+.btn-primary { background: var(--primary); color: white; }
+.goals-list { list-style: none; padding: 0; }
+.goal-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; gap: 10px; }
+.goal-item.completed span { text-decoration: line-through; color: #94a3b8; }
+.btn-delete { margin-left: auto; background: none; border: none; color: #cbd5e1; font-size: 1.2rem; cursor: pointer; }
+.btn-delete:hover { color: #ef4444; }
 
-/* Achievement Bar (Centered Controls) */
-.achievement-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; max-width: 800px; background: var(--dark-frog); color: white; border-radius: 15px 15px 0 0; transition: 0.3s; }
-.bar-header { display: flex; justify-content: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
-.centered-controls { display: flex; gap: 10px; align-items: center; }
-.btn-util { background: rgba(255,255,255,0.15); border: 1px solid white; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+/* --- Progress Bars --- */
+.progress-bar, .mini-progress-bar { width: 80px; height: 8px; background: #e2e8f0; border-radius: 5px; overflow: hidden; margin-right: 8px; }
+.progress-fill, .mini-progress-fill { height: 100%; background: var(--green); width: 0%; transition: 0.4s; }
+.progress-container, .mini-progress { display: flex; align-items: center; font-size: 0.8rem; font-weight: 600; color: #64748b; }
 
-/* 2-Column Content */
-.achievement-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; max-height: 300px; overflow-y: auto; }
-.achievement-bar.collapsed .achievement-content { max-height: 0; padding: 0; overflow: hidden; }
-.streak-box { background: rgba(0,0,0,0.1); border-radius: 15px; padding: 20px; text-align: center; border: 2px solid var(--pink); }
-#streakCount { font-size: 3rem; color: var(--pink); font-weight: bold; display: block; }
+/* --- History Footer --- */
+.history-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--dark-panel); color: white; border-top: 2px solid #3f3f5f; z-index: 1000; transition: 0.3s; }
+.history-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; cursor: pointer; }
+.history-title-group { display: flex; align-items: center; gap: 20px; }
+.history-header h3 { margin: 0; font-size: 0.9rem; color: #a5a5c5; }
+#historyChevron { display: inline-block; transition: 0.3s; font-size: 0.7rem; }
+.history-content { max-height: 400px; overflow-y: auto; padding: 0 25px 25px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.history-footer.collapsed .history-content { max-height: 0; padding-bottom: 0; overflow: hidden; }
+.history-footer.collapsed #historyChevron { transform: rotate(180deg); }
+.history-section h4 { font-size: 0.65rem; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #3f3f5f; padding-bottom: 5px; margin-bottom: 10px; }
+.history-pill { background: #2d2d3f; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #3f3f5f; }
+.pill-text { display: block; font-size: 0.8rem; }
+.pill-time { display: block; font-size: 0.6rem; color: #64748b; }
+.btn-hist-delete { background: none; border: none; color: #666; cursor: pointer; font-size: 1.1rem; }
+.btn-hist-delete:hover { color: #ef4444; }
+.btn-text-only { background: none; border: none; color: #64748b; font-size: 0.7rem; text-transform: uppercase; cursor: pointer; }
+.btn-data { background: #3f3f5f; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; margin-left: 5px; }
+
+@media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } .history-content { grid-template-columns: 1fr; } }
