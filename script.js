@@ -1,220 +1,130 @@
 (() => {
-    // 1. State Management
-    let goalsData = {
+    let pondData = {
         daily: [],
-        monthly: [],
-        yearly: [],
-        history: {
-            daily: [],
-            monthly: [],
-            yearly: []
-        }
+        history: [], // For Hops
+        moodLog: [], // For Mood entries
+        waterCount: 0
     };
 
-    const STORAGE_KEY = 'GoalsHub_Persistent_Data';
+    const moodEmojis = { Happy: "😊", Calm: "😌", Focused: "🧐", Tired: "😴", Grumpy: "😠" };
 
-    // 2. Initialize
     document.addEventListener('DOMContentLoaded', () => {
         initDate();
-        loadData();
-        setupEventListeners();
+        load();
+        events();
     });
 
-    function initDate() {
-        const dateEl = document.getElementById('currentDate');
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateEl.textContent = new Date().toLocaleDateString('en-US', options);
-    }
+    function events() {
+        // Daily Hops
+        document.getElementById('addDailyBtn').onclick = () => addHop();
+        document.getElementById('dailyInput').onkeydown = (e) => { if(e.key==='Enter') addHop(); };
 
-    // 3. Core Logic
-    function setupEventListeners() {
-        // Goal Inputs & Buttons
-        ['daily', 'monthly', 'yearly'].forEach(type => {
-            const capType = type.charAt(0).toUpperCase() + type.slice(1);
-            
-            // Add click
-            document.getElementById(`add${capType}Btn`).onclick = () => addGoal(type);
-            
-            // Add via Enter Key
-            document.getElementById(`${type}Input`).onkeydown = (e) => {
-                if (e.key === 'Enter') addGoal(type);
+        // Mood Tracker (Tracks various entries throughout the day)
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.onclick = () => {
+                const mood = btn.dataset.mood;
+                pondData.moodLog.push({
+                    mood,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    id: Date.now()
+                });
+                save(); renderHistory();
+                alert(`Mood logged: ${mood} ${moodEmojis[mood]}`);
             };
         });
 
-        // Banner Controls
-        document.getElementById('bannerClose').onclick = () => {
-            document.getElementById('backupBanner').classList.add('hidden');
-        };
-        document.getElementById('bannerExportBtn').onclick = () => exportData();
+        // Water Tracker
+        document.querySelectorAll('.drop-btn').forEach((btn, i) => {
+            btn.onclick = () => {
+                pondData.waterCount = pondData.waterCount === i + 1 ? i : i + 1;
+                renderWater(); save();
+            };
+        });
 
-        // History Drawer Toggle
-        document.getElementById('historyToggle').onclick = (e) => {
-            // Prevent toggle if clicking buttons inside the header
-            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL') return;
+        // UI Controls
+        document.getElementById('historyToggle').onclick = () => {
             document.getElementById('historyFooter').classList.toggle('collapsed');
         };
-
-        // Data Management
+        document.getElementById('bannerClose').onclick = () => document.getElementById('backupBanner').classList.add('hidden');
         document.getElementById('exportBtn').onclick = exportData;
-        document.getElementById('importFile').onchange = importData;
-        document.getElementById('clearHistoryBtn').onclick = clearAllHistory;
-    }
-
-    function addGoal(type) {
-        const input = document.getElementById(`${type}Input`);
-        const text = input.value.trim();
-        
-        if (!text) return;
-
-        const newGoal = {
-            id: Date.now(),
-            text: text,
-            createdAt: new Date().toISOString()
+        document.getElementById('clearHistoryBtn').onclick = () => {
+            if(confirm("Clear all your pond achievements?")) {
+                pondData.history = []; pondData.moodLog = []; pondData.waterCount = 0;
+                save(); location.reload();
+            }
         };
-
-        goalsData[type].push(newGoal);
-        input.value = '';
-        saveAndRender();
     }
 
-    window.toggleGoal = (type, id) => {
-        const index = goalsData[type].findIndex(g => g.id === id);
-        if (index > -1) {
-            const completedGoal = goalsData[type].splice(index, 1)[0];
-            
-            // Move to history
-            goalsData.history[type].push({
-                ...completedGoal,
-                completedAt: new Date().toISOString(),
-                timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    function addHop() {
+        const input = document.getElementById('dailyInput');
+        if(!input.value.trim()) return;
+        pondData.daily.push({ id: Date.now(), text: input.value.trim() });
+        save(); renderActive(); input.value = '';
+    }
+
+    window.toggleHop = (id) => {
+        const idx = pondData.daily.findIndex(g => g.id === id);
+        if(idx > -1) {
+            const item = pondData.daily.splice(idx, 1)[0];
+            pondData.history.push({ 
+                text: item.text, 
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                id: Date.now() 
             });
-
-            saveAndRender();
+            save(); renderActive(); renderHistory();
         }
     };
 
-    window.deleteActiveGoal = (type, id) => {
-        goalsData[type] = goalsData[type].filter(g => g.id !== id);
-        saveAndRender();
-    };
-
-    window.deleteHistoryItem = (type, id) => {
-        goalsData.history[type] = goalsData.history[type].filter(h => h.id !== id);
-        saveAndRender();
-    };
-
-    function clearAllHistory() {
-        if (confirm("Permanently delete all achievement history?")) {
-            goalsData.history = { daily: [], monthly: [], yearly: [] };
-            saveAndRender();
-        }
-    }
-
-    // 4. Persistence
-    function saveAndRender() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(goalsData));
-        renderAll();
-    }
-
-    function loadData() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                // Simple migration/merge for safety
-                goalsData = { ...goalsData, ...parsed };
-            } catch (e) {
-                console.error("Data corrupted, starting fresh.");
-            }
-        }
-        renderAll();
-    }
-
-    // 5. Rendering
-    function renderAll() {
-        ['daily', 'monthly', 'yearly'].forEach(type => {
-            renderActiveList(type);
-            renderHistoryList(type);
-            updateProgress(type);
-        });
-    }
-
-    function renderActiveList(type) {
-        const list = document.getElementById(`${type}List`);
-        list.innerHTML = goalsData[type].map(goal => `
-            <li class="goal-item">
-                <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})">
-                <span>${escapeHtml(goal.text)}</span>
-                <button class="btn-delete" onclick="deleteActiveGoal('${type}', ${goal.id})">×</button>
+    function renderActive() {
+        const list = document.getElementById('dailyList');
+        list.innerHTML = pondData.daily.map(g => `
+            <li style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <input type="checkbox" onchange="toggleHop(${g.id})">
+                <span>${g.text}</span>
             </li>
+        `).join('') || '<li style="color:#67a36a; font-size:0.8rem;">No active hops...</li>';
+        updateProgress();
+    }
+
+    function renderHistory() {
+        // Daily Log
+        document.getElementById('dailyHistoryList').innerHTML = [...pondData.history].reverse().map(h => `
+            <div style="font-size:0.8rem; margin-bottom:5px; color:white;">🌿 ${h.text} <small style="opacity:0.6">(${h.time})</small></div>
+        `).join('') || '<span>-</span>';
+
+        // Mood & Water Log
+        const moodHtml = [...pondData.moodLog].reverse().map(m => `
+            <div style="font-size:0.8rem; margin-bottom:5px; color:white;">${moodEmojis[m.mood]} ${m.mood} <small style="opacity:0.6">(${m.time})</small></div>
         `).join('');
+        document.getElementById('moodHistoryList').innerHTML = moodHtml || '<span>No entries yet</span>';
     }
 
-    function renderHistoryList(type) {
-        const list = document.getElementById(`${type}HistoryList`);
-        // Show newest first
-        const history = [...goalsData.history[type]].reverse();
-        
-        list.innerHTML = history.map(item => `
-            <div class="history-pill">
-                <div class="history-info">
-                    <span class="pill-text">${escapeHtml(item.text)}</span>
-                    <span class="pill-time">${item.timeStr || ''}</span>
-                </div>
-                <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${item.id})">×</button>
-            </div>
-        `).join('');
+    function renderWater() {
+        const drops = document.querySelectorAll('.drop-btn');
+        drops.forEach((btn, i) => {
+            i < pondData.waterCount ? btn.classList.add('active') : btn.classList.remove('active');
+        });
+        document.getElementById('waterCountText').textContent = `${pondData.waterCount} / 8 glasses`;
     }
 
-    function updateProgress(type) {
-        // Since goals disappear when completed, we use history count for progress
-        // Note: This logic assumes daily reset, or total session progress
-        const active = goalsData[type].length;
-        const finished = goalsData.history[type].length;
-        const total = active + finished;
-        const percent = total === 0 ? 0 : Math.round((finished / total) * 100);
-
-        const bar = document.getElementById(`${type}Progress`);
-        const text = document.getElementById(`${type}ProgressText`);
-        
-        if (bar) bar.style.width = `${percent}%`;
-        if (text) text.textContent = `${percent}%`;
+    function updateProgress() {
+        const total = pondData.daily.length + pondData.history.length;
+        const percent = total ? Math.round((pondData.history.length / total) * 100) : 0;
+        document.getElementById('dailyProgressText').textContent = percent + '%';
+        document.getElementById('dailyProgress').style.width = percent + '%';
     }
 
-    // 6. Data Portability
+    function save() { localStorage.setItem('Simplified_Pond', JSON.stringify(pondData)); }
+    function load() {
+        const s = localStorage.getItem('Simplified_Pond');
+        if(s) pondData = JSON.parse(s);
+        renderActive(); renderHistory(); renderWater();
+    }
+
+    function initDate() { document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'}); }
+
     function exportData() {
-        const dataStr = JSON.stringify(goalsData, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Goals_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-        link.click();
-    }
-
-    function importData(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const imported = JSON.parse(event.target.result);
-                if (imported.history) {
-                    goalsData = imported;
-                    saveAndRender();
-                    alert("Data restored successfully!");
-                }
-            } catch (err) {
-                alert("Invalid backup file.");
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        const blob = new Blob([JSON.stringify(pondData)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "ProgressPond_Backup.json"; a.click();
     }
 })();
