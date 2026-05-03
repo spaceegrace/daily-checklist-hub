@@ -1,47 +1,38 @@
-:root {
-    --frog-green: #2d6a4f;
-    --lily-pad: #95d5b2;
-    --pond-pink: #ff8fa3;
-    --petal-pink: #fff0f3;
-    --text-main: #1b4332;
+/* Big Frog Priority */
+.goal-item.big-frog {
+    border: 2px solid #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+}
+.btn-crown { background: none; border: none; cursor: pointer; font-size: 1.1rem; }
+
+/* Jumpstart Focus */
+.jumpstart-focus {
+    box-shadow: 0 0 20px var(--pond-pink);
+    transform: scale(1.02);
+    border-style: solid !important;
 }
 
-body { font-family: 'Segoe UI', sans-serif; background: var(--petal-pink); color: var(--text-main); margin: 0; padding-bottom: 120px; }
-.container { max-width: 650px; margin: 0 auto; padding: 20px; text-align: center; }
-
-/* Lily Pad Animation */
-.lily-pad-container { height: 160px; display: flex; justify-content: center; align-items: center; }
-.lily-pad-gif { 
-    width: 80px; 
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+/* Energy Select Styling */
+.energy-select {
+    border: 2px solid var(--frog-green);
+    border-radius: 15px;
+    background: white;
+    font-size: 0.8rem;
+    padding: 0 5px;
 }
 
-/* Centered Layout */
-.centered-content { display: flex; flex-direction: column; gap: 20px; width: 100%; }
-.goal-card { background: white; border-radius: 16px; border: 2px solid var(--frog-green); padding: 20px; box-shadow: 6px 6px 0 var(--frog-green); text-align: left; }
-
-.input-group { display: flex; gap: 10px; margin: 15px 0; }
-.goal-input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-.btn-primary { background: var(--frog-green); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-
-/* History Footer 2-Column */
-.history-footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; max-width: 800px; background: var(--frog-green); color: white; border-radius: 12px 12px 0 0; }
-.history-content { 
-    display: grid; 
-    grid-template-columns: 1.5fr 1fr; 
-    gap: 20px; 
-    padding: 0 20px 20px;
-    max-height: 350px;
-    overflow-y: auto;
+/* Rest Popup */
+.rest-popup {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--soft-white);
+    border: 3px solid var(--frog-green);
+    padding: 20px;
+    border-radius: 25px;
+    z-index: 2000;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
-.history-col-left { display: flex; flex-direction: column; gap: 15px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px; }
-.streak-box { text-align: center; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 2px solid var(--pond-pink); }
-#streakCount { font-size: 3rem; font-weight: bold; color: var(--pond-pink); display: block; }
-
-/* Streak Milestone Classes */
-.streak-gold { color: #ffd700 !important; }
-.streak-sparkle { text-shadow: 0 0 10px #fff, 0 0 20px #ff00de; animation: pulse 1s infinite alternate; }
-@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
-
-.hidden { display: none; }
