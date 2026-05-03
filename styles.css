@@ -2,38 +2,80 @@
     --frog-green: #9ed5a0;
     --pond-pink: #ffc2d1;
     --petal-pink: #ffe5ec;
-    --soft-white: #fffcfd;
+    --soft-white: #fff9fb;
     --text-brown: #5d4a4a;
     --dark-green: #67a36a;
 }
 
-body { font-family: 'Segoe UI', sans-serif; background-color: var(--petal-pink); color: var(--text-brown); margin: 0; padding-bottom: 120px; overflow-x: hidden; }
+body { 
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif; 
+    background-color: var(--petal-pink); 
+    color: var(--text-brown); 
+    margin: 0; 
+    padding-bottom: 80px; 
+}
 
-/* Side Drawer Styles */
-.side-drawer { position: fixed; left: -300px; top: 0; width: 250px; height: 100%; background: var(--soft-white); border-right: 4px solid var(--frog-green); z-index: 1200; transition: 0.4s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
-.side-drawer.open { left: 0; }
-.drawer-toggle { position: fixed; left: 20px; top: 80px; width: 50px; height: 50px; border-radius: 50%; background: var(--frog-green); border: 2px solid white; font-size: 1.5rem; cursor: pointer; z-index: 1100; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
-.drawer-close { background: none; border: none; font-size: 1.5rem; float: right; cursor: pointer; }
-.drawer-content { margin-top: 40px; display: flex; flex-direction: column; gap: 30px; }
+/* --- Banner & Header --- */
+.backup-banner { 
+    background: var(--pond-pink); 
+    color: var(--text-brown); 
+    padding: 10px; 
+    font-size: 0.85rem; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 20px; 
+    position: sticky; 
+    top: 0; 
+    z-index: 1100;
+    border-bottom: 3px dashed white;
+}
 
-/* Achievement Bar & Standardized Buttons */
-.history-footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; max-width: 800px; background: var(--frog-green); border-radius: 20px 20px 0 0; border: 3px solid var(--dark-green); transition: 0.3s; color: white; }
-.history-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; cursor: pointer; }
-.btn-util { background: var(--dark-green); border: 2px solid white; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin-left: 5px; display: inline-block; }
-.btn-util:hover { background: white; color: var(--dark-green); }
+.btn-close-banner { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-brown); }
 
-/* Goal Card UI */
-.container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: center; }
-.goal-card { background: var(--soft-white); border-radius: 25px; border: 3px solid var(--frog-green); padding: 20px; box-shadow: 8px 8px 0px var(--pond-pink); text-align: left; margin-bottom: 25px; }
-.input-group { display: flex; gap: 8px; margin: 15px 0; }
-.goal-input { flex: 1; padding: 10px; border: 2px solid var(--frog-green); border-radius: 12px; }
-.btn-primary { background: var(--frog-green); color: white; border: 2px solid var(--dark-green); border-radius: 12px; font-weight: bold; cursor: pointer; padding: 8px 15px; }
+.header h1 { color: var(--dark-green); text-shadow: 2px 2px white; margin-top: 30px; }
 
-/* General Elements */
-.backup-banner { background: var(--pond-pink); padding: 8px; display: flex; justify-content: center; align-items: center; gap: 15px; border-bottom: 3px dashed white; position: sticky; top: 0; z-index: 1000; }
-.progress-bar { width: 80px; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog-green); }
-.progress-fill { height: 100%; background: var(--frog-green); transition: 0.5s; }
-.mood-btn, .drop-btn { background: white; border: 2px solid var(--frog-green); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.mood-btn.active { background: var(--frog-green); }
-.drop-btn { filter: grayscale(100%) opacity(0.3); transition: 0.3s; }
-.drop-btn.active { filter: grayscale(0%) opacity(1); background: #e0f2fe; border-color: #7dd3fc; }
+/* --- Goal UI --- */
+section { 
+    background: var(--soft-white); 
+    border-radius: 25px; 
+    border: 3px solid var(--frog-green); 
+    padding: 25px; 
+    box-shadow: 8px 8px 0px var(--pond-pink);
+    margin-bottom: 30px;
+}
+
+.goal-input { 
+    border: 2px solid var(--frog-green); 
+    border-radius: 15px; 
+    padding: 12px; 
+    background: white;
+}
+
+.btn-primary { 
+    background: var(--frog-green); 
+    color: white; 
+    border-radius: 15px; 
+    padding: 10px 20px; 
+    border: 2px solid var(--dark-green);
+}
+
+.btn-primary:hover { background: var(--dark-green); transform: translateY(-2px); }
+
+/* --- Progress Bars --- */
+.progress-bar, .mini-progress-bar { background: #e0f2e1; border: 1px solid var(--frog-green); height: 12px; border-radius: 10px; }
+.progress-fill, .mini-progress-fill { background: var(--frog-green); border-radius: 10px; }
+
+/* --- Goal Items --- */
+.goal-item { border-bottom: 1px dashed var(--frog-green); padding: 15px 0; }
+.btn-delete { color: var(--pond-pink); font-size: 1.5rem; }
+.btn-delete:hover { color: #ff8fa3; }
+
+/* --- History Footer --- */
+.history-footer { background: var(--frog-green); border-top: 4px solid var(--dark-green); }
+.history-header h3 { color: white; font-weight: bold; }
+.history-pill { background: white; border: 2px solid var(--pond-pink); border-radius: 15px; }
+.pill-cat { color: var(--dark-green); font-weight: bold; }
+.btn-hist-delete { color: var(--pond-pink); }
+
+.hidden { display: none !important; }
