@@ -8,21 +8,19 @@
 }
 
 body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--txt); margin: 0; padding-bottom: 120px; }
-
 .container { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; }
 
-/* Progress Pond UI */
-.main-stack { display: flex; flex-direction: column; gap: 20px; }
-.pond-card { background: var(--soft); border-radius: 20px; border: 3px solid var(--frog); padding: 20px; box-shadow: 6px 6px 0px var(--pink); text-align: left; }
+/* Motivation Bar */
+.motivation-bar { background: var(--pink); padding: 12px; text-align: center; font-weight: bold; border-bottom: 2px dashed white; font-size: 0.9rem; color: var(--txt); }
 
-.input-row { display: flex; gap: 8px; margin-bottom: 10px; }
-.goal-input, input[type="text"] { flex: 1; padding: 12px; border: 2px solid var(--frog); border-radius: 12px; outline: none; }
-.btn-pond { background: var(--frog); color: white; border-radius: 12px; border: none; padding: 10px 18px; cursor: pointer; font-weight: bold; }
+.pond-card { background: var(--soft); border-radius: 20px; border: 3px solid var(--frog); padding: 20px; box-shadow: 6px 6px 0px var(--pink); text-align: left; margin-bottom: 20px; }
 
-/* Mood & Water Buttons */
-.mood-options, .droplet-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; }
+/* Water Grid (2 rows of 4) */
+.water-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.droplet-container { display: flex; justify-content: space-between; gap: 5px; }
+
+.mood-options { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; }
 .mood-btn, .drop-btn { background: white; border: 2px solid var(--frog); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.mood-btn:hover, .drop-btn:hover { transform: scale(1.1); }
 .drop-btn { filter: grayscale(100%) opacity(0.4); }
 .drop-btn.active { filter: grayscale(0%) opacity(1); background: #e0f2fe; border-color: #7dd3fc; }
 
@@ -35,11 +33,10 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .achievement-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; max-height: 250px; overflow-y: auto; }
 .achievement-bar.collapsed .achievement-content { max-height: 0; padding: 0; overflow: hidden; }
 
-/* Utilities */
+.history-list { display: flex; flex-direction: column; gap: 5px; }
+.input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.btn-pond { background: var(--frog); color: white; border-radius: 12px; border: none; padding: 10px 18px; cursor: pointer; font-weight: bold; }
+input[type="text"] { flex: 1; padding: 12px; border: 2px solid var(--frog); border-radius: 12px; }
 .progress-bar { width: 100px; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog); }
 .progress-fill { height: 100%; background: var(--frog); transition: 0.5s; width: 0%; }
 .count-badge { font-size: 0.8rem; background: var(--frog); color: white; padding: 2px 8px; border-radius: 10px; }
-.hops-list { list-style: none; padding: 0; }
-.backup-banner { background: var(--pink); padding: 8px; display: flex; justify-content: center; gap: 15px; position: sticky; top: 0; z-index: 1100; font-size: 0.8rem; border-bottom: 2px dashed white; }
-.btn-close-banner { background: none; border: none; cursor: pointer; font-weight: bold; }
-.hidden { display: none !important; }
