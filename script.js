@@ -1,16 +1,18 @@
 (() => {
-    // 1. State Management (v3 with grouped history)
+    // 1. State Management (v4 with grouped history & backup tracking)
     let goalsData = {
         daily: [],
         monthly: [],
         yearly: [],
-        history: { daily: [], monthly: [], yearly: [] }
+        history: { daily: [], monthly: [], yearly: [] },
+        lastBackup: null
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         displayCurrentDate();
         loadGoals();
         setupEventListeners();
+        checkBackupReminder();
     });
 
     function displayCurrentDate() {
@@ -52,10 +54,10 @@
             }
         });
 
-        // History Controls
+        // Subtle Clear History Button
         const clearHistBtn = document.getElementById('clearHistoryBtn');
         if (clearHistBtn) clearHistBtn.addEventListener('click', () => {
-            if (confirm("Clear all achievement history?")) {
+            if (confirm("Permanently delete your achievement history?")) {
                 goalsData.history = { daily: [], monthly: [], yearly: [] };
                 saveGoals();
                 renderMasterHistory();
@@ -63,13 +65,13 @@
         });
 
         // Backup/Restore
-        if (document.getElementById('exportBtn')) document.getElementById('exportBtn').addEventListener('click', exportData);
+        if (document.getElementById('exportBtn')) document.getElementById('exportBtn').addEventListener('click', () => exportData(true));
         if (document.getElementById('importFile')) document.getElementById('importFile').addEventListener('change', importData);
     }
 
     // 3. Storage Logic
     function loadGoals() {
-        const saved = localStorage.getItem('GoalsHub_v3_Persistent');
+        const saved = localStorage.getItem('GoalsHub_Permanent_v4');
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -82,7 +84,7 @@
     }
 
     function saveGoals() {
-        localStorage.setItem('GoalsHub_v3_Persistent', JSON.stringify(goalsData));
+        localStorage.setItem('GoalsHub_Permanent_v4', JSON.stringify(goalsData));
     }
 
     // 4. Core Goal Logic
@@ -114,7 +116,7 @@
                     id: Date.now()
                 });
             } else {
-                // Remove from history if unchecked (Optional)
+                // Optional: Remove from history if unchecked
                 goalsData.history[type] = goalsData.history[type].filter(h => h.text !== goal.text);
             }
             saveGoals();
@@ -178,30 +180,55 @@
                 <span class="pill-text">${h.text}</span>
                 <span class="pill-time">${h.date} | ${h.time}</span>
             </div>
-        `).join('') || '<span style="color:#666; font-size:0.8rem;">Finished goals appear here...</span>';
+        `).join('') || '<span style="color:#64748b; font-size:0.8rem;">Finished goals will appear here...</span>';
     }
 
-    // 6. Data Persistence
-    function exportData() {
-        const blob = new Blob([JSON.stringify(goalsData)], {type: 'application/json'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `goals_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+    // 6. Permanence & Backup Reminders
+    function checkBackupReminder() {
+        const now = Date.now();
+        const frequencyMs = 259200000; // 3 Days
+        
+        if (!goalsData.lastBackup || (now - goalsData.lastBackup > frequencyMs)) {
+            setTimeout(() => {
+                const msg = "🛡️ Secure Your Progress: It's time for your scheduled backup! Keep your history safe from browser clears by downloading a backup now.";
+                if (confirm(msg)) {
+                    exportData(false);
+                }
+            }, 2000);
+        }
+    }
+
+    function exportData(manualTrigger = true) {
+        goalsData.lastBackup = Date.now();
+        saveGoals();
+        
+        const dataStr = JSON.stringify(goalsData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `GoalsHub_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        if (manualTrigger) alert("Backup Downloaded!");
     }
 
     function importData(e) {
+        const file = e.target.files;
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
                 const imported = JSON.parse(event.target.result);
-                if (imported.daily && imported.history) {
+                if (imported.history && imported.daily) {
                     goalsData = imported;
                     saveGoals();
                     location.reload();
+                } else {
+                    alert("Invalid backup file structure.");
                 }
-            } catch (err) { alert('Invalid file.'); }
+            } catch (err) { alert("Error reading backup file."); }
         };
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(file[0]);
     }
 })();
