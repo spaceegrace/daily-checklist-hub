@@ -16,9 +16,13 @@
     });
 
     function setupEvents() {
+        // Goal Adding
         document.getElementById('addDailyBtn').onclick = addHop;
-        document.getElementById('dailyInput').onkeydown = (e) => e.key === 'Enter' && addHop();
+        document.getElementById('dailyInput').onkeydown = (e) => {
+            if (e.key === 'Enter') addHop();
+        };
 
+        // Mood Tracker
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = () => {
                 const mood = btn.dataset.mood;
@@ -27,6 +31,7 @@
             };
         });
 
+        // Water Tracker
         document.querySelectorAll('.drop-btn').forEach((btn, i) => {
             btn.onclick = () => {
                 const isAdding = (i + 1) > pondData.waterCount;
@@ -36,16 +41,21 @@
             };
         });
 
+        // Toggle History Bar
         document.getElementById('historyToggle').onclick = () => 
             document.getElementById('historyFooter').classList.toggle('collapsed');
 
+        // Reset Pond Button
         document.getElementById('resetPondBtn').onclick = () => {
             if (confirm("Reset today? Logs stay safe!")) {
-                pondData.daily = []; pondData.waterCount = 0;
-                refreshMotivation(); saveAndRefresh();
+                pondData.daily = []; 
+                pondData.waterCount = 0;
+                refreshMotivation(); 
+                saveAndRefresh();
             }
         };
 
+        // Clear History Button
         document.getElementById('clearHistoryBtn').onclick = () => {
             if (confirm("Delete ALL logs?")) {
                 pondData = { daily: [], history: [], moodLog: [], waterCount: 0, streak: 0, lastStreakDate: null };
@@ -57,17 +67,19 @@
 
     function addHop() {
         const input = document.getElementById('dailyInput');
-        if (!input.value.trim()) return;
-        pondData.daily.push({ id: Date.now(), text: input.value.trim() });
+        const text = input.value.trim();
+        if (!text) return;
+        pondData.daily.push({ id: Date.now(), text: text });
         input.value = '';
         saveAndRefresh();
     }
 
+    // FIXED: Attached to window so the HTML checkbox can find it
     window.toggleHop = (id) => {
         const idx = pondData.daily.findIndex(g => g.id === id);
         if (idx > -1) {
-            const item = pondData.daily.splice(idx, 1);
-            pondData.history.push({ text: item[0].text, time: currentTime() });
+            const item = pondData.daily.splice(idx, 1)[0]; // Remove from active
+            pondData.history.push({ text: item.text, time: currentTime() }); // Add to log
             updateStreak();
             saveAndRefresh();
         }
@@ -90,26 +102,34 @@
     }
 
     function renderAll() {
+        // Render Active Hops
         const list = document.getElementById('dailyList');
-        list.innerHTML = pondData.daily.map(g => `
-            <li style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                <input type="checkbox" style="width:20px; height:20px;" onchange="toggleHop(${g.id})">
-                <span>${g.text}</span>
-            </li>
-        `).join('') || '<li style="color:#67a36a; font-size:0.8rem;">No active hops... 🐸</li>';
+        if (list) {
+            list.innerHTML = pondData.daily.map(g => `
+                <li style="display:flex; align-items:center; gap:12px; margin-bottom:12px; background:white; padding:8px; border-radius:10px; border:1px solid #eee;">
+                    <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" onchange="toggleHop(${g.id})">
+                    <span style="font-size:1rem; color:#5d4a4a;">${g.text}</span>
+                </li>
+            `).join('') || '<li style="color:#67a36a; font-size:0.85rem; text-align:center; padding:10px;">No active hops yet... 🐸</li>';
+        }
 
+        // Render Water
         document.querySelectorAll('.drop-btn').forEach((btn, i) => {
             i < pondData.waterCount ? btn.classList.add('active') : btn.classList.remove('active');
         });
         document.getElementById('waterCountText').textContent = `${pondData.waterCount} / 8`;
+
+        // Render Streak
         document.getElementById('streakCount').textContent = pondData.streak || 0;
 
-        document.getElementById('dailyHistoryList').innerHTML = [...pondData.history].reverse().slice(0, 10).map(h => 
-            `<div>🌿 ${h.text} <small>(${h.time})</small></div>`).join('') || '<span>-</span>';
+        // Render Logs
+        document.getElementById('dailyHistoryList').innerHTML = [...pondData.history].reverse().slice(0, 15).map(h => 
+            `<div style="font-size:0.75rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">🌿 ${h.text} <small style="opacity:0.7">(${h.time})</small></div>`).join('') || '<span>-</span>';
 
-        document.getElementById('moodHistoryList').innerHTML = [...pondData.moodLog].reverse().slice(0, 10).map(m => 
-            `<div>${m.icon} ${m.val} <small>(${m.time})</small></div>`).join('') || '<span>-</span>';
+        document.getElementById('moodHistoryList').innerHTML = [...pondData.moodLog].reverse().slice(0, 15).map(m => 
+            `<div style="font-size:0.75rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">${m.icon} ${m.val} <small style="opacity:0.7">(${m.time})</small></div>`).join('') || '<span>-</span>';
 
+        // Update Progress Bar
         const total = pondData.daily.length + pondData.history.length;
         const percent = total ? Math.round((pondData.history.length / total) * 100) : 0;
         document.getElementById('dailyProgress').style.width = percent + '%';
@@ -121,12 +141,16 @@
     }
 
     const currentTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const saveAndRefresh = () => { localStorage.setItem('PondData_Final_V4', JSON.stringify(pondData)); renderAll(); };
+    const saveAndRefresh = () => { 
+        localStorage.setItem('PondData_Final_V5', JSON.stringify(pondData)); 
+        renderAll(); 
+    };
     
     function init() {
-        const s = localStorage.getItem('PondData_Final_V4');
+        const s = localStorage.getItem('PondData_Final_V5');
         if (s) pondData = JSON.parse(s);
-        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const dateEl = document.getElementById('currentDate');
+        if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         refreshMotivation();
         renderAll();
     }
