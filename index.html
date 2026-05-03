@@ -1,38 +1,134 @@
-/* Big Frog Priority */
-.goal-item.big-frog {
-    border: 2px solid #ffd700;
-    background: rgba(255, 215, 0, 0.1);
-    border-radius: 12px;
-    padding: 10px;
-}
-.btn-crown { background: none; border: none; cursor: pointer; font-size: 1.1rem; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Pond 🐸</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="backupBanner" class="backup-banner">
+        <span>✨ Ribbit! Remember to backup your hops to keep them safe! 🌸</span>
+        <button id="bannerClose" class="btn-close-banner" aria-label="Dismiss">×</button>
+    </div>
 
-/* Jumpstart Focus */
-.jumpstart-focus {
-    box-shadow: 0 0 20px var(--pond-pink);
-    transform: scale(1.02);
-    border-style: solid !important;
-}
+    <div class="container">
+        <header class="header">
+            <h1>✨ Progress Pond ✨</h1>
+            <p class="date" id="currentDate"></p>
+            
+            <div class="header-controls">
+                <button id="jumpstartBtn" class="btn-zen" title="Highlight one random goal">🌅 Morning Jumpstart</button>
 
-/* Energy Select Styling */
-.energy-select {
-    border: 2px solid var(--frog-green);
-    border-radius: 15px;
-    background: white;
-    font-size: 0.8rem;
-    padding: 0 5px;
-}
+                <div class="mood-tracker">
+                    <p>How are you feeling today?</p>
+                    <div class="mood-options">
+                        <button class="mood-btn" data-mood="happy" title="Happy">😊🐸</button>
+                        <button class="mood-btn" data-mood="calm" title="Calm">😌🐸</button>
+                        <button class="mood-btn" data-mood="focused" title="Focused">🧐🐸</button>
+                        <button class="mood-btn" data-mood="tired" title="Sleepy">😴🐸</button>
+                    </div>
+                </div>
 
-/* Rest Popup */
-.rest-popup {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--soft-white);
-    border: 3px solid var(--frog-green);
-    padding: 20px;
-    border-radius: 25px;
-    z-index: 2000;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
+                <div class="hydration-tracker">
+                    <p>Daily Hydration 💧</p>
+                    <div class="droplet-container" id="dropletContainer">
+                        <button class="drop-btn" data-index="0">💧</button>
+                        <button class="drop-btn" data-index="1">💧</button>
+                        <button class="drop-btn" data-index="2">💧</button>
+                        <button class="drop-btn" data-index="3">💧</button>
+                        <button class="drop-btn" data-index="4">💧</button>
+                        <button class="drop-btn" data-index="5">💧</button>
+                        <button class="drop-btn" data-index="6">💧</button>
+                        <button class="drop-btn" data-index="7">💧</button>
+                    </div>
+                </div>
+
+                <div class="zen-container">
+                    <button id="zenToggle" class="btn-zen">🧘‍♂️ Zen Mode</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="centered-content">
+            <section class="goal-card daily-section">
+                <div class="section-header">
+                    <h2>Daily Hops 🌿</h2>
+                    <div class="progress-wrap">
+                        <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
+                        <span id="dailyProgressText">0%</span>
+                        <small id="dailyCountText" class="count-badge">(0 of 0)</small>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="dailyInput" class="goal-input" placeholder="Next hop..." autocomplete="off">
+                    <select id="energyLevel" class="energy-select">
+                        <option value="high">⚡ High</option>
+                        <option value="low">☁️ Low</option>
+                    </select>
+                    <button class="btn btn-primary" id="addDailyBtn">Add Hop 🌸</button>
+                </div>
+                <ul class="goals-list" id="dailyList"></ul>
+
+                <div class="affirmation-container" id="frogAffirmation">
+                    <span class="sparkle">✨</span>
+                    <p id="affirmationText">You're doing amazing, hop-py froggy!</p>
+                    <span class="sparkle">✨</span>
+                </div>
+            </section>
+
+            <section class="goal-card">
+                <h3>Monthly Hops 🍄</h3>
+                <div class="input-group">
+                    <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
+                    <button class="btn btn-primary" id="addMonthlyBtn">+</button>
+                </div>
+                <ul class="goals-list" id="monthlyList"></ul>
+            </section>
+
+            <section class="goal-card">
+                <h3>Yearly Hops 🌼</h3>
+                <div class="input-group">
+                    <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
+                    <button class="btn btn-primary" id="addYearlyBtn">+</button>
+                </div>
+                <ul class="goals-list" id="yearlyList"></ul>
+            </section>
+        </main>
+    </div>
+
+    <footer class="history-footer collapsed" id="historyFooter">
+        <div class="history-header" id="historyToggle">
+            <div class="history-title-group">
+                <h3>Progress Pond <span id="historyChevron">▼</span></h3>
+                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
+            </div>
+            <div class="data-mgmt">
+                <button id="exportBtn" class="btn-util">Backup</button>
+                <label for="importFile" class="btn-util" role="button" tabindex="0">Restore</label>
+                <input type="file" id="importFile" accept=".json" style="display:none;">
+            </div>
+        </div>
+        
+        <div class="history-content" id="historyContent">
+            <div class="history-col-left">
+                <div class="hist-sub">
+                    <h4>🗓️ Daily Log</h4>
+                    <div id="moodHistoryList" class="mood-log-container"></div>
+                </div>
+                <div class="hist-sub"><h4>Monthly</h4><div id="monthlyHistoryList"></div></div>
+                <div class="hist-sub"><h4>Yearly</h4><div id="yearlyHistoryList"></div></div>
+            </div>
+            <div class="history-col-right">
+                <div class="streak-box">
+                    <h4>🔥 Streak</h4>
+                    <span id="streakCount">0</span>
+                    <small>Days in a Row</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
