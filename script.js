@@ -23,9 +23,8 @@
         document.getElementById('bannerClose')?.addEventListener('click', () => {
             document.getElementById('backupBanner').classList.add('hidden');
         });
-        document.getElementById('bannerExportBtn')?.addEventListener('click', () => exportData(true));
 
-        // History Controls
+        // History Toggle Logic
         document.getElementById('historyToggle')?.addEventListener('click', (e) => {
             if(!['BUTTON', 'LABEL', 'INPUT'].includes(e.target.tagName)) {
                 document.getElementById('historyFooter').classList.toggle('collapsed');
@@ -33,7 +32,7 @@
         });
 
         document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
-            if(confirm("Permanently delete ALL achievement history?")) { 
+            if(confirm("🐸 Ribbit? Are you sure you want to clear all achievements?")) { 
                 goalsData.history = { daily: [], monthly: [], yearly: [] }; 
                 saveGoals(); renderMasterHistory(); 
             }
@@ -46,7 +45,7 @@
     function loadGoals() {
         const saved = localStorage.getItem('GoalsHub_v5_Final');
         if (saved) {
-            try { goalsData = JSON.parse(saved); } catch(e) { console.error("Load failed"); }
+            try { goalsData = JSON.parse(saved); } catch(e) { console.error("Ribbit! Load failed"); }
         }
         ['daily', 'monthly', 'yearly'].forEach(renderGoals);
         renderMasterHistory();
@@ -94,7 +93,7 @@
                 <span>${escapeHtml(goal.text)}</span>
                 <button class="btn-delete" onclick="deleteGoal('${type}', ${goal.id})">×</button>
             </li>
-        `).join('') || '<li style="color:#94a3b8; font-size:0.8rem; padding:10px 0;">No goals yet...</li>';
+        `).join('') || '<li style="color:#94a3b8; font-size:0.8rem; padding:10px 0;">No hops yet... 🐸</li>';
         updateProgress(type);
     }
 
@@ -107,7 +106,7 @@
                     <div><span class="pill-text">${escapeHtml(h.text)}</span><span class="pill-time">${h.time}</span></div>
                     <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${h.id})">×</button>
                 </div>
-            `).join('') || '<span style="color:#64748b; font-size:0.7rem;">Empty</span>';
+            `).join('') || '<span style="color:#64748b; font-size:0.7rem;">Empty pond</span>';
         });
     }
 
@@ -124,15 +123,15 @@
         const blob = new Blob([JSON.stringify(goalsData, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `GoalHub_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `FroggyBackup_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
-        if (manual) alert("Backup saved!");
+        if (manual) alert("Yay! Your hops are safe in a backup file! 🌸");
     }
 
     function importData(e) {
         const reader = new FileReader();
         reader.onload = (event) => {
-            try { goalsData = JSON.parse(event.target.result); saveGoals(); location.reload(); } catch(e) { alert("Invalid file"); }
+            try { goalsData = JSON.parse(event.target.result); saveGoals(); location.reload(); } catch(e) { alert("Oh no! That file isn't ribbiting correctly."); }
         };
         reader.readAsText(e.target.files);
     }
