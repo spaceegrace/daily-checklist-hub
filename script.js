@@ -1,6 +1,5 @@
-// Progress Pond - Final Unified Script (V7)
+// Progress Pond - Persistent Progress Version (V10)
 (function() {
-    // 1. Initial State
     var pondData = { 
         daily: [], 
         history: [], 
@@ -19,17 +18,15 @@
         "🐸 💗 You are the best frog in the pond! ✨ 🐸"
     ];
 
-    // 2. Page Initialization
     window.onload = function() {
-        // Load from LocalStorage
-        var saved = localStorage.getItem('ProgressPond_Final_V7');
+        // 1. Load data and KEEP water progress
+        var saved = localStorage.getItem('ProgressPond_V10');
         if (saved) {
             try {
                 pondData = JSON.parse(saved);
             } catch(e) { console.log("New start!"); }
         }
 
-        // Display Date
         var dateEl = document.getElementById('currentDate');
         if (dateEl) {
             dateEl.textContent = new Date().toLocaleDateString('en-US', { 
@@ -37,19 +34,15 @@
             });
         }
 
-        // Set Random Motivation
         var motivationEl = document.getElementById('motivationText');
         if (motivationEl) {
             motivationEl.textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)];
         }
 
         // --- Event Listeners ---
-        
-        // Add Hop Button
         var addBtn = document.getElementById('addDailyBtn');
         if (addBtn) addBtn.onclick = addHop;
 
-        // Enter Key for Input
         var inputField = document.getElementById('dailyInput');
         if (inputField) {
             inputField.onkeypress = function(e) {
@@ -60,7 +53,6 @@
             };
         }
 
-        // Banner Close
         var bannerBtn = document.getElementById('bannerClose');
         if (bannerBtn) {
             bannerBtn.onclick = function() {
@@ -68,7 +60,7 @@
             };
         }
 
-        // Mood Buttons
+        // Mood Tracker
         document.querySelectorAll('.mood-btn').forEach(function(btn) {
             btn.onclick = function() {
                 var mood = btn.getAttribute('data-mood');
@@ -81,7 +73,7 @@
             };
         });
 
-        // Water Droplets
+        // Water Tracker (Saves blue state)
         document.querySelectorAll('.drop-btn').forEach(function(btn, index) {
             btn.onclick = function() {
                 var isAdding = (index + 1) > pondData.waterCount;
@@ -97,7 +89,6 @@
             };
         });
 
-        // Achievement Bar Toggle
         var toggle = document.getElementById('historyToggle');
         if (toggle) {
             toggle.onclick = function() { 
@@ -105,22 +96,22 @@
             };
         }
 
-        // Reset Pond Button
+        // RESET POND - Clears active hops AND water
         var reset = document.getElementById('resetPondBtn');
         if (reset) reset.onclick = function() {
-            if (confirm("Reset today's hops and water? Logs will stay safe!")) {
+            if (confirm("Reset today's hops and water? (Logs will stay safe!)")) {
                 pondData.daily = []; 
                 pondData.waterCount = 0; 
                 saveAndRefresh();
-                location.reload(); // Refresh to pick new motivation quote
+                location.reload(); 
             }
         };
 
-        // Clear History Button
+        // CLEAR HISTORY - Total Wipe
         var clear = document.getElementById('clearHistoryBtn');
         if (clear) clear.onclick = function() {
-            if (confirm("⚠️ Delete ALL history logs permanently?")) {
-                localStorage.removeItem('ProgressPond_Final_V7');
+            if (confirm("⚠️ Delete ALL history logs and reset pond?")) {
+                localStorage.removeItem('ProgressPond_V10');
                 location.reload();
             }
         };
@@ -128,12 +119,10 @@
         renderAll();
     };
 
-    // 3. Main Functions
     function addHop() {
         var input = document.getElementById('dailyInput');
         if (!input) return;
         var text = input.value.trim();
-        
         if (text !== "") {
             pondData.daily.push({ id: Date.now(), text: text });
             input.value = "";
@@ -142,16 +131,11 @@
         }
     }
 
-    // Global toggle function for checkboxes
     window.toggleHop = function(id) {
         var foundIndex = -1;
         for (var i = 0; i < pondData.daily.length; i++) {
-            if (pondData.daily[i].id === id) {
-                foundIndex = i;
-                break;
-            }
+            if (pondData.daily[i].id === id) { foundIndex = i; break; }
         }
-
         if (foundIndex > -1) {
             var item = pondData.daily.splice(foundIndex, 1);
             pondData.history.push({ 
@@ -166,10 +150,8 @@
     function updateStreak() {
         var today = new Date().toDateString();
         if (pondData.lastStreakDate === today) return;
-        
         var yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        
         if (pondData.lastStreakDate === yesterday.toDateString()) {
             pondData.streak++;
         } else {
@@ -179,11 +161,10 @@
     }
 
     function saveAndRefresh() {
-        localStorage.setItem('ProgressPond_Final_V7', JSON.stringify(pondData));
+        localStorage.setItem('ProgressPond_V10', JSON.stringify(pondData));
         renderAll();
     }
 
-    // 4. Rendering UI
     function renderAll() {
         // Hops List
         var list = document.getElementById('dailyList');
@@ -199,7 +180,7 @@
             list.innerHTML = html || '<li style="color:#67a36a; text-align:center; padding:10px;">No hops yet... 🐸</li>';
         }
 
-        // Water Droplets
+        // Water Droplets (Blue state stays after refresh)
         document.querySelectorAll('.drop-btn').forEach(function(btn, i) {
             if (i < pondData.waterCount) btn.classList.add('active');
             else btn.classList.remove('active');
@@ -208,10 +189,11 @@
         var wText = document.getElementById('waterCountText');
         if (wText) wText.textContent = pondData.waterCount + " / 8";
 
-        // Logs and Streak
+        // Streak
         var sCount = document.getElementById('streakCount');
         if (sCount) sCount.textContent = pondData.streak || 0;
 
+        // History
         var hList = document.getElementById('dailyHistoryList');
         if (hList) {
             var hHtml = "";
@@ -222,17 +204,19 @@
             hList.innerHTML = hHtml || "-";
         }
 
+        // Mood Log
         var mList = document.getElementById('moodHistoryList');
         if (mList) {
             var mHtml = "";
             var revMoods = pondData.moodLog.slice().reverse();
             for (var k = 0; k < Math.min(revMoods.length, 15); k++) {
-                mHtml += '<div style="font-size:0.75rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">' + revMoods[k].icon + ' ' + revMoods[k].val + ' <small style="opacity:0.7">(' + revMoods[k].time + ')</small></div>';
+                var m = revMoods[k];
+                mHtml += '<div style="font-size:0.75rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">' + m.icon + ' ' + m.val + ' <small style="opacity:0.7">(' + m.time + ')</small></div>';
             }
             mList.innerHTML = mHtml || "-";
         }
 
-        // Progress Calculation
+        // Progress Fill
         var total = pondData.daily.length + pondData.history.length;
         var percent = total ? Math.round((pondData.history.length / total) * 100) : 0;
         var pFill = document.getElementById('dailyProgress');
