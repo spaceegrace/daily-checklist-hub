@@ -16,11 +16,20 @@
     });
 
     function setupEvents() {
-        // Goal Adding
-        document.getElementById('addDailyBtn').onclick = addHop;
-        document.getElementById('dailyInput').onkeydown = (e) => {
-            if (e.key === 'Enter') addHop();
-        };
+        // Goal Adding (Button Click)
+        const addBtn = document.getElementById('addDailyBtn');
+        if (addBtn) addBtn.onclick = addHop;
+
+        // Goal Adding (Enter Key)
+        const input = document.getElementById('dailyInput');
+        if (input) {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevents page refresh
+                    addHop();
+                }
+            });
+        }
 
         // Mood Tracker
         document.querySelectorAll('.mood-btn').forEach(btn => {
@@ -68,18 +77,25 @@
     function addHop() {
         const input = document.getElementById('dailyInput');
         const text = input.value.trim();
-        if (!text) return;
+        
+        if (!text) {
+            console.log("Empty hop ignored");
+            return;
+        }
+
         pondData.daily.push({ id: Date.now(), text: text });
-        input.value = '';
+        input.value = ''; // Clear input field
         saveAndRefresh();
+        
+        // Return focus to input for mobile speed
+        input.focus(); 
     }
 
-    // FIXED: Attached to window so the HTML checkbox can find it
     window.toggleHop = (id) => {
         const idx = pondData.daily.findIndex(g => g.id === id);
         if (idx > -1) {
-            const item = pondData.daily.splice(idx, 1)[0]; // Remove from active
-            pondData.history.push({ text: item.text, time: currentTime() }); // Add to log
+            const item = pondData.daily.splice(idx, 1)[0]; 
+            pondData.history.push({ text: item.text, time: currentTime() }); 
             updateStreak();
             saveAndRefresh();
         }
@@ -102,53 +118,57 @@
     }
 
     function renderAll() {
-        // Render Active Hops
         const list = document.getElementById('dailyList');
-        if (list) {
-            list.innerHTML = pondData.daily.map(g => `
-                <li style="display:flex; align-items:center; gap:12px; margin-bottom:12px; background:white; padding:8px; border-radius:10px; border:1px solid #eee;">
-                    <input type="checkbox" style="width:22px; height:22px; cursor:pointer;" onchange="toggleHop(${g.id})">
-                    <span style="font-size:1rem; color:#5d4a4a;">${g.text}</span>
-                </li>
-            `).join('') || '<li style="color:#67a36a; font-size:0.85rem; text-align:center; padding:10px;">No active hops yet... 🐸</li>';
-        }
+        if (!list) return;
 
-        // Render Water
+        list.innerHTML = pondData.daily.map(g => `
+            <li style="display:flex; align-items:center; gap:12px; margin-bottom:12px; background:white; padding:10px; border-radius:12px; border:1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <input type="checkbox" style="width:24px; height:24px; cursor:pointer;" onchange="toggleHop(${g.id})">
+                <span style="font-size:1.05rem; color:#5d4a4a;">${g.text}</span>
+            </li>
+        `).join('') || '<li style="color:#67a36a; font-size:0.85rem; text-align:center; padding:15px; border: 1px dashed #9ed5a0; border-radius: 12px;">No active hops yet... 🐸</li>';
+
         document.querySelectorAll('.drop-btn').forEach((btn, i) => {
             i < pondData.waterCount ? btn.classList.add('active') : btn.classList.remove('active');
         });
-        document.getElementById('waterCountText').textContent = `${pondData.waterCount} / 8`;
 
-        // Render Streak
+        document.getElementById('waterCountText').textContent = `${pondData.waterCount} / 8`;
         document.getElementById('streakCount').textContent = pondData.streak || 0;
 
-        // Render Logs
         document.getElementById('dailyHistoryList').innerHTML = [...pondData.history].reverse().slice(0, 15).map(h => 
             `<div style="font-size:0.75rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">🌿 ${h.text} <small style="opacity:0.7">(${h.time})</small></div>`).join('') || '<span>-</span>';
 
         document.getElementById('moodHistoryList').innerHTML = [...pondData.moodLog].reverse().slice(0, 15).map(m => 
             `<div style="font-size:0.75rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">${m.icon} ${m.val} <small style="opacity:0.7">(${m.time})</small></div>`).join('') || '<span>-</span>';
 
-        // Update Progress Bar
         const total = pondData.daily.length + pondData.history.length;
         const percent = total ? Math.round((pondData.history.length / total) * 100) : 0;
-        document.getElementById('dailyProgress').style.width = percent + '%';
-        document.getElementById('dailyProgressText').textContent = percent + '%';
+        const progressFill = document.getElementById('dailyProgress');
+        const progressText = document.getElementById('dailyProgressText');
+        if (progressFill) progressFill.style.width = percent + '%';
+        if (progressText) progressText.textContent = percent + '%';
     }
 
     function refreshMotivation() {
-        document.getElementById('motivationText').textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)];
+        const text = document.getElementById('motivationText');
+        if (text) text.textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)];
     }
 
     const currentTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const saveAndRefresh = () => { 
-        localStorage.setItem('PondData_Final_V5', JSON.stringify(pondData)); 
+        localStorage.setItem('PondData_V6_Mobile', JSON.stringify(pondData)); 
         renderAll(); 
     };
     
     function init() {
-        const s = localStorage.getItem('PondData_Final_V5');
-        if (s) pondData = JSON.parse(s);
+        const s = localStorage.getItem('PondData_V6_Mobile');
+        if (s) {
+            try {
+                pondData = JSON.parse(s);
+            } catch(e) {
+                console.error("Storage reset due to error");
+            }
+        }
         const dateEl = document.getElementById('currentDate');
         if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         refreshMotivation();
