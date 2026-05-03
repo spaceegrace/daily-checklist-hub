@@ -8,7 +8,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <h1>📋 Daily Goals Hub</h1>
             <p class="date" id="currentDate"></p>
@@ -29,10 +28,6 @@
                     <button class="btn btn-primary" id="addDailyBtn">+ Add Goal</button>
                 </div>
                 <ul class="goals-list" id="dailyList"></ul>
-                <div class="action-buttons">
-                    <button class="btn btn-secondary" id="clearDailyCompletedBtn">Clear Completed</button>
-                    <button class="btn btn-secondary" id="clearDailyAllBtn">Clear All</button>
-                </div>
             </section>
 
             <!-- Sidebar -->
@@ -42,7 +37,7 @@
                         <h3>📆 Monthly</h3>
                         <div class="mini-progress">
                             <div class="mini-progress-bar"><div class="mini-progress-fill" id="monthlyProgress"></div></div>
-                            <span id="monthlyProgressText">0%</span>
+                            <span id="monthlyProgressText" class="progress-percent">0%</span>
                         </div>
                     </div>
                     <div class="input-group compact">
@@ -50,9 +45,6 @@
                         <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
                     </div>
                     <ul class="goals-list compact" id="monthlyList"></ul>
-                    <div class="action-buttons compact">
-                        <button class="btn btn-secondary compact" id="clearMonthlyCompletedBtn">Clear</button>
-                    </div>
                 </section>
 
                 <section class="yearly-goals">
@@ -60,7 +52,7 @@
                         <h3>🎯 Yearly</h3>
                         <div class="mini-progress">
                             <div class="mini-progress-bar"><div class="mini-progress-fill" id="yearlyProgress"></div></div>
-                            <span id="yearlyProgressText">0%</span>
+                            <span id="yearlyProgressText" class="progress-percent">0%</span>
                         </div>
                     </div>
                     <div class="input-group compact">
@@ -68,9 +60,6 @@
                         <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
                     </div>
                     <ul class="goals-list compact" id="yearlyList"></ul>
-                    <div class="action-buttons compact">
-                        <button class="btn btn-secondary compact" id="clearYearlyCompletedBtn">Clear</button>
-                    </div>
                 </section>
             </aside>
         </main>
@@ -81,7 +70,7 @@
         <div class="history-header" id="historyToggle">
             <div class="history-title-group">
                 <h3>🏆 Achievement History <span id="historyChevron">▼</span></h3>
-                <button id="clearHistoryBtn" class="btn-text-only">Clear All</button>
+                <button id="clearHistoryBtn" class="btn-text-only">Clear All History</button>
             </div>
             <div class="data-mgmt">
                 <button id="exportBtn" class="btn-data">💾 Backup</button>
