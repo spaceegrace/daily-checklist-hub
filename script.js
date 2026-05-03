@@ -1,54 +1,75 @@
 (() => {
-    let goalsData = {
-        daily: [], monthly: [], yearly: [],
-        history: { daily: [], monthly: [], yearly: [] }
-    };
+    let goalsData = { daily: [], monthly: [], yearly: [], history: { daily: [], monthly: [], yearly: [] }, streak: 0, lastCompletionDate: null };
+    let timerInterval;
+    let timeLeft = 25 * 60;
 
     document.addEventListener('DOMContentLoaded', () => {
         displayCurrentDate();
         loadGoals();
         setupEventListeners();
+        updateStreakUI();
     });
 
     function setupEventListeners() {
         ['daily', 'monthly', 'yearly'].forEach(type => {
-            const cap = type.charAt(0).toUpperCase() + type.slice(1);
-            document.getElementById(`add${cap}Btn`)?.addEventListener('click', () => addGoal(type));
-            document.getElementById(`${type}Input`)?.addEventListener('keypress', (e) => { if (e.key === 'Enter') addGoal(type); });
+            const input = document.getElementById(`${type}Input`);
+            input?.addEventListener('keydown', (e) => { if (e.key === 'Enter') addGoal(type); });
+            document.getElementById(`add${type.charAt(0).toUpperCase() + type.slice(1)}Btn`)?.addEventListener('click', () => addGoal(type));
         });
 
-        document.getElementById('bannerClose')?.addEventListener('click', () => document.getElementById('backupBanner').classList.add('hidden'));
-        
+        // Timer Controls
+        document.getElementById('startTimer')?.addEventListener('click', toggleTimer);
+        document.getElementById('resetTimer')?.addEventListener('click', resetTimer);
+
         document.getElementById('historyToggle')?.addEventListener('click', (e) => {
-            if(!['BUTTON', 'LABEL', 'INPUT'].includes(e.target.tagName)) {
-                document.getElementById('historyFooter').classList.toggle('collapsed');
-                document.getElementById('historyChevron').textContent = document.getElementById('historyFooter').classList.contains('collapsed') ? '▼' : '▲';
-            }
+            if(!['BUTTON', 'LABEL'].includes(e.target.tagName)) document.getElementById('historyFooter').classList.toggle('collapsed');
         });
 
-        document.getElementById('exportBtn')?.addEventListener('click', () => exportData(true));
-        document.getElementById('importFile')?.addEventListener('change', importData);
-        document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
-            if(confirm("🐸 Ribbit? Clear all achievements?")) { goalsData.history = { daily: [], monthly: [], yearly: [] }; saveGoals(); renderMasterHistory(); }
-        });
+        document.getElementById('exportBtn')?.addEventListener('click', () => exportData());
+        document.getElementById('bannerClose')?.addEventListener('click', () => document.getElementById('backupBanner').classList.add('hidden'));
     }
 
-    function loadGoals() {
-        const saved = localStorage.getItem('GoalsHub_v6_Froggy');
-        if (saved) goalsData = JSON.parse(saved);
-        ['daily', 'monthly', 'yearly'].forEach(renderGoals);
-        renderMasterHistory();
-        updateLilyPad();
+    // --- Focus Timer Logic ---
+    function toggleTimer() {
+        const btn = document.getElementById('startTimer');
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            btn.textContent = '▶️';
+        } else {
+            btn.textContent = '⏸️';
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up! Great focus! 🐸");
+                    resetTimer();
+                }
+            }, 1000);
+        }
     }
 
-    function saveGoals() { localStorage.setItem('GoalsHub_v6_Froggy', JSON.stringify(goalsData)); }
+    function resetTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timeLeft = 25 * 60;
+        updateTimerUI();
+        document.getElementById('startTimer').textContent = '▶️';
+    }
 
+    function updateTimerUI() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        document.getElementById('timerText').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // --- Goal & Streak Logic ---
     function addGoal(type) {
         const input = document.getElementById(`${type}Input`);
         if (!input?.value.trim()) return;
         goalsData[type].push({ id: Date.now(), text: input.value.trim(), completed: false });
-        saveGoals(); renderGoals(type); input.value = '';
-        updateLilyPad();
+        saveGoals(); renderGoals(type); input.value = ''; updateLilyPad();
     }
 
     window.toggleGoal = (type, id) => {
@@ -56,51 +77,75 @@
         if (goal) {
             goal.completed = !goal.completed;
             if (goal.completed) {
-                goalsData.history[type].push({ text: goal.text, id: Date.now(), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) });
+                goalsData.history[type].push({ text: goal.text, id: Date.now() });
+                if (type === 'daily') handleStreak();
             }
             saveGoals(); renderGoals(type); renderMasterHistory(); updateLilyPad();
         }
     };
 
-    window.deleteGoal = (type, id) => {
-        goalsData[type] = goalsData[type].filter(g => g.id !== id);
-        saveGoals(); renderGoals(type); updateLilyPad();
-    };
+    function handleStreak() {
+        const today = new Date().setHours(0,0,0,0);
+        const last = goalsData.lastCompletionDate ? new Date(goalsData.lastCompletionDate).setHours(0,0,0,0) : null;
+        if (last !== today) {
+            goalsData.streak++;
+            goalsData.lastCompletionDate = new Date().toISOString();
+            updateStreakUI();
+        }
+    }
 
-    window.deleteHistoryItem = (type, id) => {
-        goalsData.history[type] = goalsData.history[type].filter(h => h.id !== id);
-        saveGoals(); renderMasterHistory();
-    };
+    function updateStreakUI() {
+        const el = document.getElementById('streakCount');
+        if (!el) return;
+        el.textContent = goalsData.streak;
+        el.classList.toggle('streak-gold', goalsData.streak >= 7);
+        el.classList.toggle('streak-sparkle', goalsData.streak >= 30);
+    }
 
-    // --- Growing Animation Logic ---
     function updateLilyPad() {
-        const dailyGoals = goalsData.daily;
-        const completed = dailyGoals.filter(g => g.completed).length;
+        const daily = goalsData.daily;
         const pad = document.getElementById('magicLilyPad');
         if (!pad) return;
-
-        // Base size 60px, grows by 20px per completed goal
-        const size = 60 + (completed * 25);
-        // Gets brighter green as you finish goals
-        const brightness = 100 + (completed * 10);
-        
+        const ratio = daily.length ? daily.filter(g => g.completed).length / daily.length : 0;
+        const size = 120 + (ratio * 60);
         pad.style.width = `${size}px`;
         pad.style.height = `${size}px`;
-        pad.style.filter = `brightness(${brightness}%)`;
-        pad.style.fontSize = `${1.5 + (completed * 0.2)}rem`;
     }
+
+    // --- Storage & Rendering (Simplified) ---
+    function loadGoals() {
+        const saved = localStorage.getItem('FroggyHub_v10');
+        if (saved) goalsData = JSON.parse(saved);
+        ['daily', 'monthly', 'yearly'].forEach(renderGoals);
+        renderMasterHistory();
+        updateLilyPad();
+    }
+
+    function saveGoals() { localStorage.setItem('FroggyHub_v10', JSON.stringify(goalsData)); }
 
     function renderGoals(type) {
         const list = document.getElementById(`${type}List`);
         if (!list) return;
         list.innerHTML = goalsData[type].map(goal => `
-            <li class="goal-item ${goal.completed ? 'completed' : ''}">
+            <li class="goal-item">
                 <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})" ${goal.completed ? 'checked' : ''}>
                 <span>${goal.text}</span>
-                <button class="btn-delete" onclick="deleteGoal('${type}', ${goal.id})">×</button>
+                <button onclick="deleteGoal('${type}', ${goal.id})">×</button>
             </li>
-        `).join('') || '<li style="color:#94a3b8; font-size:0.8rem;">No hops yet...</li>';
+        `).join('') || '<li class="empty">No hops yet...</li>';
         updateProgress(type);
+    }
+
+    window.deleteGoal = (type, id) => { goalsData[type] = goalsData[type].filter(g => g.id !== id); saveGoals(); renderGoals(type); updateLilyPad(); };
+    window.deleteHistoryItem = (type, id) => { goalsData.history[type] = goalsData.history[type].filter(h => h.id !== id); saveGoals(); renderMasterHistory(); };
+
+    function renderMasterHistory() {
+        ['daily', 'monthly', 'yearly'].forEach(type => {
+            const container = document.getElementById(`${type}HistoryList`);
+            if (container) container.innerHTML = goalsData.history[type].map(h => `
+                <div class="history-pill"><span>${h.text}</span><button onclick="deleteHistoryItem('${type}', ${h.id})">×</button></div>
+            `).join('') || '<span>Empty</span>';
+        });
     }
 
     function updateProgress(type) {
@@ -112,38 +157,13 @@
         if (text) text.textContent = percent + '%';
     }
 
-    function renderMasterHistory() {
-        ['daily', 'monthly', 'yearly'].forEach(type => {
-            const container = document.getElementById(`${type}HistoryList`);
-            if (!container) return;
-            container.innerHTML = [...goalsData.history[type]].reverse().map(h => `
-                <div class="history-pill">
-                    <span>${h.text}</span>
-                    <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${h.id})">×</button>
-                </div>
-            `).join('') || '<span style="color:#64748b; font-size:0.7rem;">Empty</span>';
-        });
-    }
-
-    function exportData(manual) {
-        const blob = new Blob([JSON.stringify(goalsData, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `FroggyHub_Backup.json`;
-        a.click();
-        if (manual) alert("Hops exported successfully! 🌸");
-    }
-
-    function importData(e) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try { goalsData = JSON.parse(event.target.result); saveGoals(); location.reload(); } catch(e) { alert("File error! Ribbit!"); }
-        };
-        reader.readAsText(e.target.files);
+    function exportData() {
+        const blob = new Blob([JSON.stringify(goalsData)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "FroggyHub.json"; a.click();
     }
 
     function displayCurrentDate() {
         const el = document.getElementById('currentDate');
-        if (el) el.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        if (el) el.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     }
 })();
