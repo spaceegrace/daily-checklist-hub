@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Simple Reminder Banner -->
     <div id="backupBanner" class="backup-banner">
         <span>🌸 Ribbit! Remember to download a backup to keep your achievements safe! 🐸</span>
-        <button id="bannerClose" class="btn-close-banner" title="Dismiss">×</button>
+        <button id="bannerClose" class="btn-close-banner">×</button>
     </div>
 
     <div class="container">
@@ -19,7 +18,13 @@
             <p class="date" id="currentDate"></p>
         </header>
 
+        <!-- Growing Lily Pad Animation -->
+        <div class="pond-area">
+            <div id="magicLilyPad" class="lily-pad-visual">🐸</div>
+        </div>
+
         <main class="main-content">
+            <!-- Center Section -->
             <section class="daily-goals">
                 <div class="section-header">
                     <h2>🐸 Today's Hops</h2>
@@ -35,15 +40,10 @@
                 <ul class="goals-list" id="dailyList"></ul>
             </section>
 
+            <!-- Right Sidebar -->
             <aside class="sidebar">
                 <section class="monthly-goals">
-                    <div class="section-header">
-                        <h3>🍄 Monthly</h3>
-                        <div class="mini-progress">
-                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="monthlyProgress"></div></div>
-                            <span id="monthlyProgressText" class="progress-percent">0%</span>
-                        </div>
-                    </div>
+                    <h3>🍄 Monthly</h3>
                     <div class="input-group compact">
                         <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
                         <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
@@ -52,13 +52,7 @@
                 </section>
 
                 <section class="yearly-goals">
-                    <div class="section-header">
-                        <h3>🌿 Yearly</h3>
-                        <div class="mini-progress">
-                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="yearlyProgress"></div></div>
-                            <span id="yearlyProgressText" class="progress-percent">0%</span>
-                        </div>
-                    </div>
+                    <h3>🌿 Yearly</h3>
                     <div class="input-group compact">
                         <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
                         <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
@@ -69,11 +63,11 @@
         </main>
     </div>
 
-    <!-- Collapsible History -->
+    <!-- Centered Collapsible History -->
     <div class="history-footer collapsed" id="historyFooter">
         <div class="history-header" id="historyToggle">
             <div class="history-title-group">
-                <h3>👑 Froggy Achievements <span id="historyChevron">▼</span></h3>
+                <h3>👑 Achievement Pond <span id="historyChevron">▼</span></h3>
                 <button id="clearHistoryBtn" class="btn-text-only">Clear All</button>
             </div>
             <div class="data-mgmt">
@@ -85,15 +79,15 @@
         
         <div class="history-content" id="historyContent">
             <div class="history-section">
-                <h4>Daily Lilypads</h4>
+                <h4>Daily Hops</h4>
                 <div id="dailyHistoryList" class="history-grid"></div>
             </div>
             <div class="history-section">
-                <h4>Monthly Ponds</h4>
+                <h4>Monthly Hops</h4>
                 <div id="monthlyHistoryList" class="history-grid"></div>
             </div>
             <div class="history-section">
-                <h4>Yearly Forests</h4>
+                <h4>Yearly Hops</h4>
                 <div id="yearlyHistoryList" class="history-grid"></div>
             </div>
         </div>
