@@ -48,7 +48,6 @@ body {
 /* Clean Hover Effect */
 .goal-item:hover {
     transform: translateY(-3px); /* Subtle lift */
-    box-shadow: 0 8px 20px var(--shadow); /* Soft shadow underneath */
     border-color: #ddd;
 }
 
