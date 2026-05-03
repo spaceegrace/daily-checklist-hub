@@ -1,134 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progress Pond 🐸</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="backupBanner" class="backup-banner">
-        <span>✨ Ribbit! Remember to backup your hops to keep them safe! 🌸</span>
-        <button id="bannerClose" class="btn-close-banner" aria-label="Dismiss">×</button>
-    </div>
+:root {
+    --frog-green: #9ed5a0;
+    --pond-pink: #ffc2d1;
+    --petal-pink: #ffe5ec;
+    --soft-white: #fffcfd;
+    --text-brown: #5d4a4a;
+    --dark-green: #67a36a;
+}
 
-    <div class="container">
-        <header class="header">
-            <h1>✨ Progress Pond ✨</h1>
-            <p class="date" id="currentDate"></p>
-            
-            <div class="header-controls">
-                <button id="jumpstartBtn" class="btn-zen" title="Highlight one random goal">🌅 Morning Jumpstart</button>
+body { font-family: 'Segoe UI', sans-serif; background-color: var(--petal-pink); color: var(--text-brown); margin: 0; padding-bottom: 120px; overflow-x: hidden; }
 
-                <div class="mood-tracker">
-                    <p>How are you feeling today?</p>
-                    <div class="mood-options">
-                        <button class="mood-btn" data-mood="happy" title="Happy">😊🐸</button>
-                        <button class="mood-btn" data-mood="calm" title="Calm">😌🐸</button>
-                        <button class="mood-btn" data-mood="focused" title="Focused">🧐🐸</button>
-                        <button class="mood-btn" data-mood="tired" title="Sleepy">😴🐸</button>
-                    </div>
-                </div>
+/* Side Drawer Styles */
+.side-drawer { position: fixed; left: -300px; top: 0; width: 250px; height: 100%; background: var(--soft-white); border-right: 4px solid var(--frog-green); z-index: 1200; transition: 0.4s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+.side-drawer.open { left: 0; }
+.drawer-toggle { position: fixed; left: 20px; top: 80px; width: 50px; height: 50px; border-radius: 50%; background: var(--frog-green); border: 2px solid white; font-size: 1.5rem; cursor: pointer; z-index: 1100; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+.drawer-close { background: none; border: none; font-size: 1.5rem; float: right; cursor: pointer; }
+.drawer-content { margin-top: 40px; display: flex; flex-direction: column; gap: 30px; }
 
-                <div class="hydration-tracker">
-                    <p>Daily Hydration 💧</p>
-                    <div class="droplet-container" id="dropletContainer">
-                        <button class="drop-btn" data-index="0">💧</button>
-                        <button class="drop-btn" data-index="1">💧</button>
-                        <button class="drop-btn" data-index="2">💧</button>
-                        <button class="drop-btn" data-index="3">💧</button>
-                        <button class="drop-btn" data-index="4">💧</button>
-                        <button class="drop-btn" data-index="5">💧</button>
-                        <button class="drop-btn" data-index="6">💧</button>
-                        <button class="drop-btn" data-index="7">💧</button>
-                    </div>
-                </div>
+/* Achievement Bar & Standardized Buttons */
+.history-footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; max-width: 800px; background: var(--frog-green); border-radius: 20px 20px 0 0; border: 3px solid var(--dark-green); transition: 0.3s; color: white; }
+.history-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; cursor: pointer; }
+.btn-util { background: var(--dark-green); border: 2px solid white; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin-left: 5px; display: inline-block; }
+.btn-util:hover { background: white; color: var(--dark-green); }
 
-                <div class="zen-container">
-                    <button id="zenToggle" class="btn-zen">🧘‍♂️ Zen Mode</button>
-                </div>
-            </div>
-        </header>
+/* Goal Card UI */
+.container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: center; }
+.goal-card { background: var(--soft-white); border-radius: 25px; border: 3px solid var(--frog-green); padding: 20px; box-shadow: 8px 8px 0px var(--pond-pink); text-align: left; margin-bottom: 25px; }
+.input-group { display: flex; gap: 8px; margin: 15px 0; }
+.goal-input { flex: 1; padding: 10px; border: 2px solid var(--frog-green); border-radius: 12px; }
+.btn-primary { background: var(--frog-green); color: white; border: 2px solid var(--dark-green); border-radius: 12px; font-weight: bold; cursor: pointer; padding: 8px 15px; }
 
-        <main class="centered-content">
-            <section class="goal-card daily-section">
-                <div class="section-header">
-                    <h2>Daily Hops 🌿</h2>
-                    <div class="progress-wrap">
-                        <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
-                        <span id="dailyProgressText">0%</span>
-                        <small id="dailyCountText" class="count-badge">(0 of 0)</small>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <input type="text" id="dailyInput" class="goal-input" placeholder="Next hop..." autocomplete="off">
-                    <select id="energyLevel" class="energy-select">
-                        <option value="high">⚡ High</option>
-                        <option value="low">☁️ Low</option>
-                    </select>
-                    <button class="btn btn-primary" id="addDailyBtn">Add Hop 🌸</button>
-                </div>
-                <ul class="goals-list" id="dailyList"></ul>
-
-                <div class="affirmation-container" id="frogAffirmation">
-                    <span class="sparkle">✨</span>
-                    <p id="affirmationText">You're doing amazing, hop-py froggy!</p>
-                    <span class="sparkle">✨</span>
-                </div>
-            </section>
-
-            <section class="goal-card">
-                <h3>Monthly Hops 🍄</h3>
-                <div class="input-group">
-                    <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
-                    <button class="btn btn-primary" id="addMonthlyBtn">+</button>
-                </div>
-                <ul class="goals-list" id="monthlyList"></ul>
-            </section>
-
-            <section class="goal-card">
-                <h3>Yearly Hops 🌼</h3>
-                <div class="input-group">
-                    <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
-                    <button class="btn btn-primary" id="addYearlyBtn">+</button>
-                </div>
-                <ul class="goals-list" id="yearlyList"></ul>
-            </section>
-        </main>
-    </div>
-
-    <footer class="history-footer collapsed" id="historyFooter">
-        <div class="history-header" id="historyToggle">
-            <div class="history-title-group">
-                <h3>Progress Pond <span id="historyChevron">▼</span></h3>
-                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
-            </div>
-            <div class="data-mgmt">
-                <button id="exportBtn" class="btn-util">Backup</button>
-                <label for="importFile" class="btn-util" role="button" tabindex="0">Restore</label>
-                <input type="file" id="importFile" accept=".json" style="display:none;">
-            </div>
-        </div>
-        
-        <div class="history-content" id="historyContent">
-            <div class="history-col-left">
-                <div class="hist-sub">
-                    <h4>🗓️ Daily Log</h4>
-                    <div id="moodHistoryList" class="mood-log-container"></div>
-                </div>
-                <div class="hist-sub"><h4>Monthly</h4><div id="monthlyHistoryList"></div></div>
-                <div class="hist-sub"><h4>Yearly</h4><div id="yearlyHistoryList"></div></div>
-            </div>
-            <div class="history-col-right">
-                <div class="streak-box">
-                    <h4>🔥 Streak</h4>
-                    <span id="streakCount">0</span>
-                    <small>Days in a Row</small>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <script src="script.js"></script>
-</body>
-</html>
+/* General Elements */
+.backup-banner { background: var(--pond-pink); padding: 8px; display: flex; justify-content: center; align-items: center; gap: 15px; border-bottom: 3px dashed white; position: sticky; top: 0; z-index: 1000; }
+.progress-bar { width: 80px; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog-green); }
+.progress-fill { height: 100%; background: var(--frog-green); transition: 0.5s; }
+.mood-btn, .drop-btn { background: white; border: 2px solid var(--frog-green); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.mood-btn.active { background: var(--frog-green); }
+.drop-btn { filter: grayscale(100%) opacity(0.3); transition: 0.3s; }
+.drop-btn.active { filter: grayscale(0%) opacity(1); background: #e0f2fe; border-color: #7dd3fc; }
