@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Top Encouragement Bar -->
+    <!-- 🌸 Cute Supporting Banner -->
     <div id="motivationBar" class="motivation-bar">
         <span id="motivationText">✨ Ribbit! Let's make some waves today! 🌸</span>
     </div>
@@ -19,11 +19,9 @@
         </header>
 
         <main class="main-stack">
-            <!-- Mood Tracker -->
+            <!-- 1. Mood Tracker -->
             <section class="pond-card">
-                <div class="card-header">
-                    <h2>How are you feeling? 🐸</h2>
-                </div>
+                <h2>How are you feeling? 🐸</h2>
                 <div class="mood-options">
                     <button class="mood-btn" data-mood="Happy">😊</button>
                     <button class="mood-btn" data-mood="Calm">😌</button>
@@ -33,20 +31,20 @@
                 </div>
             </section>
 
-            <!-- Water Intake (2 Rows of 4) -->
+            <!-- 2. Water Intake (Rows of 4) -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
                     <span id="waterCountText" class="count-badge">0 / 8 glasses</span>
                 </div>
                 <div class="water-grid">
-                    <div class="droplet-container">
+                    <div class="droplet-row">
                         <button class="drop-btn" data-index="0">💧</button>
                         <button class="drop-btn" data-index="1">💧</button>
                         <button class="drop-btn" data-index="2">💧</button>
                         <button class="drop-btn" data-index="3">💧</button>
                     </div>
-                    <div class="droplet-container">
+                    <div class="droplet-row">
                         <button class="drop-btn" data-index="4">💧</button>
                         <button class="drop-btn" data-index="5">💧</button>
                         <button class="drop-btn" data-index="6">💧</button>
@@ -55,25 +53,25 @@
                 </div>
             </section>
 
-            <!-- Daily Hops -->
+            <!-- 3. Daily Hops -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Daily Hops 🌿</h2>
-                    <div class="progress-info">
+                    <div class="progress-wrap">
                         <div class="progress-bar"><div id="dailyProgress" class="progress-fill"></div></div>
                         <span id="dailyProgressText">0%</span>
                     </div>
                 </div>
                 <div class="input-row">
-                    <input type="text" id="dailyInput" placeholder="Add a new hop..." autocomplete="off">
-                    <button id="addDailyBtn" class="btn-pond">Add Hop 🌸</button>
+                    <input type="text" id="dailyInput" placeholder="Next hop..." autocomplete="off">
+                    <button id="addDailyBtn" class="btn-pond">Add Hop</button>
                 </div>
                 <ul id="dailyList" class="hops-list"></ul>
             </section>
         </main>
     </div>
 
-    <!-- Achievement Bar -->
+    <!-- Collapsible Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
@@ -82,13 +80,12 @@
                 <button id="clearHistoryBtn" class="btn-util">Clear History</button>
             </div>
         </div>
-        
         <div class="achievement-content">
-            <div class="achieve-left">
+            <div class="achieve-col">
                 <h4>Hops Log</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
-            <div class="achieve-right">
+            <div class="achieve-col">
                 <h4>Mood & Water Log</h4>
                 <div id="moodHistoryList" class="history-list"></div>
             </div>
