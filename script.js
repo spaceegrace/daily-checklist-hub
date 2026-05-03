@@ -1,145 +1,215 @@
 (() => {
+    // 1. State Management
     let goalsData = {
-        daily: [], monthly: [], yearly: [],
-        history: { daily: [], monthly: [], yearly: [] }
+        daily: [],
+        monthly: [],
+        yearly: [],
+        history: {
+            daily: [],
+            monthly: [],
+            yearly: []
+        }
     };
 
+    const STORAGE_KEY = 'GoalsHub_Persistent_Data';
+
+    // 2. Initialize
     document.addEventListener('DOMContentLoaded', () => {
-        displayCurrentDate();
-        loadGoals();
+        initDate();
+        loadData();
         setupEventListeners();
     });
 
+    function initDate() {
+        const dateEl = document.getElementById('currentDate');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = new Date().toLocaleDateString('en-US', options);
+    }
+
+    // 3. Core Logic
     function setupEventListeners() {
+        // Goal Inputs & Buttons
         ['daily', 'monthly', 'yearly'].forEach(type => {
-            const cap = type.charAt(0).toUpperCase() + type.slice(1);
-            document.getElementById(`add${cap}Btn`)?.addEventListener('click', () => addGoal(type));
-            document.getElementById(`${type}Input`)?.addEventListener('keypress', (e) => { 
-                if (e.key === 'Enter') addGoal(type); 
-            });
+            const capType = type.charAt(0).toUpperCase() + type.slice(1);
+            
+            // Add click
+            document.getElementById(`add${capType}Btn`).onclick = () => addGoal(type);
+            
+            // Add via Enter Key
+            document.getElementById(`${type}Input`).onkeydown = (e) => {
+                if (e.key === 'Enter') addGoal(type);
+            };
         });
 
         // Banner Controls
-        document.getElementById('bannerClose')?.addEventListener('click', () => {
+        document.getElementById('bannerClose').onclick = () => {
             document.getElementById('backupBanner').classList.add('hidden');
-        });
-        document.getElementById('bannerExportBtn')?.addEventListener('click', () => exportData(true));
+        };
+        document.getElementById('bannerExportBtn').onclick = () => exportData();
 
-        // History Controls
-        document.getElementById('historyToggle')?.addEventListener('click', (e) => {
-            if(!['BUTTON', 'LABEL', 'INPUT'].includes(e.target.tagName)) {
-                document.getElementById('historyFooter').classList.toggle('collapsed');
-            }
-        });
+        // History Drawer Toggle
+        document.getElementById('historyToggle').onclick = (e) => {
+            // Prevent toggle if clicking buttons inside the header
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL') return;
+            document.getElementById('historyFooter').classList.toggle('collapsed');
+        };
 
-        document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
-            if(confirm("Permanently delete ALL achievement history?")) { 
-                goalsData.history = { daily: [], monthly: [], yearly: [] }; 
-                saveGoals(); renderMasterHistory(); 
-            }
-        });
-
-        document.getElementById('exportBtn')?.addEventListener('click', () => exportData(true));
-        document.getElementById('importFile')?.addEventListener('change', importData);
+        // Data Management
+        document.getElementById('exportBtn').onclick = exportData;
+        document.getElementById('importFile').onchange = importData;
+        document.getElementById('clearHistoryBtn').onclick = clearAllHistory;
     }
-
-    function loadGoals() {
-        const saved = localStorage.getItem('GoalsHub_v5_Final');
-        if (saved) {
-            try { goalsData = JSON.parse(saved); } catch(e) { console.error("Load failed"); }
-        }
-        ['daily', 'monthly', 'yearly'].forEach(renderGoals);
-        renderMasterHistory();
-    }
-
-    function saveGoals() { localStorage.setItem('GoalsHub_v5_Final', JSON.stringify(goalsData)); }
 
     function addGoal(type) {
         const input = document.getElementById(`${type}Input`);
-        if (!input?.value.trim()) return;
-        goalsData[type].push({ id: Date.now(), text: input.value.trim(), completed: false });
-        saveGoals(); renderGoals(type); input.value = '';
+        const text = input.value.trim();
+        
+        if (!text) return;
+
+        const newGoal = {
+            id: Date.now(),
+            text: text,
+            createdAt: new Date().toISOString()
+        };
+
+        goalsData[type].push(newGoal);
+        input.value = '';
+        saveAndRender();
     }
 
     window.toggleGoal = (type, id) => {
-        const goal = goalsData[type].find(g => g.id === id);
-        if (goal) {
-            goal.completed = !goal.completed;
-            if (goal.completed) {
-                goalsData.history[type].push({ 
-                    text: goal.text, id: Date.now(), 
-                    time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) 
-                });
-            }
-            saveGoals(); renderGoals(type); renderMasterHistory();
+        const index = goalsData[type].findIndex(g => g.id === id);
+        if (index > -1) {
+            const completedGoal = goalsData[type].splice(index, 1)[0];
+            
+            // Move to history
+            goalsData.history[type].push({
+                ...completedGoal,
+                completedAt: new Date().toISOString(),
+                timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+
+            saveAndRender();
         }
     };
 
-    window.deleteGoal = (type, id) => {
+    window.deleteActiveGoal = (type, id) => {
         goalsData[type] = goalsData[type].filter(g => g.id !== id);
-        saveGoals(); renderGoals(type);
+        saveAndRender();
     };
 
     window.deleteHistoryItem = (type, id) => {
         goalsData.history[type] = goalsData.history[type].filter(h => h.id !== id);
-        saveGoals(); renderMasterHistory();
+        saveAndRender();
     };
 
-    function renderGoals(type) {
-        const list = document.getElementById(`${type}List`);
-        if (!list) return;
-        list.innerHTML = goalsData[type].map(goal => `
-            <li class="goal-item ${goal.completed ? 'completed' : ''}">
-                <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})" ${goal.completed ? 'checked' : ''}>
-                <span>${escapeHtml(goal.text)}</span>
-                <button class="btn-delete" onclick="deleteGoal('${type}', ${goal.id})">×</button>
-            </li>
-        `).join('') || '<li style="color:#94a3b8; font-size:0.8rem; padding:10px 0;">No goals yet...</li>';
-        updateProgress(type);
+    function clearAllHistory() {
+        if (confirm("Permanently delete all achievement history?")) {
+            goalsData.history = { daily: [], monthly: [], yearly: [] };
+            saveAndRender();
+        }
     }
 
-    function renderMasterHistory() {
+    // 4. Persistence
+    function saveAndRender() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(goalsData));
+        renderAll();
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // Simple migration/merge for safety
+                goalsData = { ...goalsData, ...parsed };
+            } catch (e) {
+                console.error("Data corrupted, starting fresh.");
+            }
+        }
+        renderAll();
+    }
+
+    // 5. Rendering
+    function renderAll() {
         ['daily', 'monthly', 'yearly'].forEach(type => {
-            const container = document.getElementById(`${type}HistoryList`);
-            if (!container) return;
-            container.innerHTML = [...goalsData.history[type]].reverse().map(h => `
-                <div class="history-pill">
-                    <div><span class="pill-text">${escapeHtml(h.text)}</span><span class="pill-time">${h.time}</span></div>
-                    <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${h.id})">×</button>
-                </div>
-            `).join('') || '<span style="color:#64748b; font-size:0.7rem;">Empty</span>';
+            renderActiveList(type);
+            renderHistoryList(type);
+            updateProgress(type);
         });
     }
 
-    function updateProgress(type) {
-        const goals = goalsData[type];
-        const percent = goals.length ? Math.round((goals.filter(g => g.completed).length / goals.length) * 100) : 0;
-        const bar = document.getElementById(`${type}Progress`);
-        const text = document.getElementById(`${type}ProgressText`);
-        if (bar) bar.style.width = percent + '%';
-        if (text) text.textContent = percent + '%';
+    function renderActiveList(type) {
+        const list = document.getElementById(`${type}List`);
+        list.innerHTML = goalsData[type].map(goal => `
+            <li class="goal-item">
+                <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})">
+                <span>${escapeHtml(goal.text)}</span>
+                <button class="btn-delete" onclick="deleteActiveGoal('${type}', ${goal.id})">×</button>
+            </li>
+        `).join('');
     }
 
-    function exportData(manual) {
-        const blob = new Blob([JSON.stringify(goalsData, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `GoalHub_Backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-        if (manual) alert("Backup saved!");
+    function renderHistoryList(type) {
+        const list = document.getElementById(`${type}HistoryList`);
+        // Show newest first
+        const history = [...goalsData.history[type]].reverse();
+        
+        list.innerHTML = history.map(item => `
+            <div class="history-pill">
+                <div class="history-info">
+                    <span class="pill-text">${escapeHtml(item.text)}</span>
+                    <span class="pill-time">${item.timeStr || ''}</span>
+                </div>
+                <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${item.id})">×</button>
+            </div>
+        `).join('');
+    }
+
+    function updateProgress(type) {
+        // Since goals disappear when completed, we use history count for progress
+        // Note: This logic assumes daily reset, or total session progress
+        const active = goalsData[type].length;
+        const finished = goalsData.history[type].length;
+        const total = active + finished;
+        const percent = total === 0 ? 0 : Math.round((finished / total) * 100);
+
+        const bar = document.getElementById(`${type}Progress`);
+        const text = document.getElementById(`${type}ProgressText`);
+        
+        if (bar) bar.style.width = `${percent}%`;
+        if (text) text.textContent = `${percent}%`;
+    }
+
+    // 6. Data Portability
+    function exportData() {
+        const dataStr = JSON.stringify(goalsData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Goals_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+        link.click();
     }
 
     function importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
         const reader = new FileReader();
         reader.onload = (event) => {
-            try { goalsData = JSON.parse(event.target.result); saveGoals(); location.reload(); } catch(e) { alert("Invalid file"); }
+            try {
+                const imported = JSON.parse(event.target.result);
+                if (imported.history) {
+                    goalsData = imported;
+                    saveAndRender();
+                    alert("Data restored successfully!");
+                }
+            } catch (err) {
+                alert("Invalid backup file.");
+            }
         };
-        reader.readAsText(e.target.files);
-    }
-
-    function displayCurrentDate() {
-        const el = document.getElementById('currentDate');
-        if (el) el.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        reader.readAsText(file);
     }
 
     function escapeHtml(text) {
