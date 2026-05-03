@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="backupBanner" class="backup-banner">
-        <span>✨ Ribbit! Remember to backup your pond data! 🌸</span>
-        <button id="bannerClose" class="btn-close-banner">×</button>
+    <!-- Top Encouragement Bar -->
+    <div id="motivationBar" class="motivation-bar">
+        <span id="motivationText">✨ Ribbit! Let's make some waves today! 🌸</span>
     </div>
 
     <div class="container">
@@ -19,7 +19,7 @@
         </header>
 
         <main class="main-stack">
-            <!-- 1. Mood Tracker (Multiple entries allowed) -->
+            <!-- Mood Tracker -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>How are you feeling? 🐸</h2>
@@ -33,25 +33,29 @@
                 </div>
             </section>
 
-            <!-- 2. Water Intake -->
+            <!-- Water Intake (2 Rows of 4) -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
                     <span id="waterCountText" class="count-badge">0 / 8 glasses</span>
                 </div>
-                <div class="droplet-container" id="dropletContainer">
-                    <button class="drop-btn" data-index="0">💧</button>
-                    <button class="drop-btn" data-index="1">💧</button>
-                    <button class="drop-btn" data-index="2">💧</button>
-                    <button class="drop-btn" data-index="3">💧</button>
-                    <button class="drop-btn" data-index="4">💧</button>
-                    <button class="drop-btn" data-index="5">💧</button>
-                    <button class="drop-btn" data-index="6">💧</button>
-                    <button class="drop-btn" data-index="7">💧</button>
+                <div class="water-grid">
+                    <div class="droplet-container">
+                        <button class="drop-btn" data-index="0">💧</button>
+                        <button class="drop-btn" data-index="1">💧</button>
+                        <button class="drop-btn" data-index="2">💧</button>
+                        <button class="drop-btn" data-index="3">💧</button>
+                    </div>
+                    <div class="droplet-container">
+                        <button class="drop-btn" data-index="4">💧</button>
+                        <button class="drop-btn" data-index="5">💧</button>
+                        <button class="drop-btn" data-index="6">💧</button>
+                        <button class="drop-btn" data-index="7">💧</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- 3. Daily Hops -->
+            <!-- Daily Hops -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Daily Hops 🌿</h2>
@@ -69,25 +73,23 @@
         </main>
     </div>
 
-    <!-- Collapsible Achievement Bar -->
+    <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
                 <button id="historyToggle" class="btn-util">Achievements ▼</button>
-                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
-                <button id="exportBtn" class="btn-util">Backup</button>
-                <label for="importFile" class="btn-util">Restore</label>
-                <input type="file" id="importFile" accept=".json" style="display:none;">
+                <button id="resetPondBtn" class="btn-util">Reset Pond</button>
+                <button id="clearHistoryBtn" class="btn-util">Clear History</button>
             </div>
         </div>
         
         <div class="achievement-content">
             <div class="achieve-left">
-                <h4>Today's Log</h4>
+                <h4>Hops Log</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
             <div class="achieve-right">
-                <h4>Mood & Water History</h4>
+                <h4>Mood & Water Log</h4>
                 <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
