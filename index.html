@@ -3,102 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progress Pond 🐸</title>
+    <title>Daily Goals Hub</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Top Backup Reminder Banner -->
     <div id="backupBanner" class="backup-banner">
-        <span>✨ Ribbit! Remember to backup your hops to keep them safe! 🌸</span>
-        <button id="bannerClose" class="btn-close-banner">×</button>
-    </div>
-
-    <!-- Side Drawer Toggle -->
-    <button id="drawerToggle" class="drawer-toggle" title="Health & Mood">🐸</button>
-
-    <!-- Side Drawer (Mood & Water) -->
-    <aside id="sideDrawer" class="side-drawer">
-        <button id="drawerClose" class="drawer-close">×</button>
-        <div class="drawer-content">
-            <div class="drawer-group">
-                <p>How are you feeling?</p>
-                <div class="mood-options">
-                    <button class="mood-btn" data-mood="happy">😊</button>
-                    <button class="mood-btn" data-mood="calm">😌</button>
-                    <button class="mood-btn" data-mood="focused">🧐</button>
-                    <button class="mood-btn" data-mood="tired">😴</button>
-                </div>
-            </div>
-            <div class="drawer-group">
-                <p>Hydration 💧</p>
-                <div class="droplet-container">
-                    <button class="drop-btn" data-index="0">💧</button>
-                    <button class="drop-btn" data-index="1">💧</button>
-                    <button class="drop-btn" data-index="2">💧</button>
-                    <button class="drop-btn" data-index="3">💧</button>
-                </div>
-            </div>
+        <span>🛡️ Keep your history safe: Download a backup to protect against browser clears.</span>
+        <div class="banner-actions">
+            <button id="bannerExportBtn" class="btn-banner">Backup Now</button>
+            <button id="bannerClose" class="btn-close-banner" title="Dismiss">×</button>
         </div>
-    </aside>
+    </div>
 
     <div class="container">
         <header class="header">
-            <h1>✨ Progress Pond ✨</h1>
-            <p id="currentDate" class="date-display"></p>
+            <h1>📋 Daily Goals Hub</h1>
+            <p class="date" id="currentDate"></p>
         </header>
 
-        <main class="main-stack">
-            <section class="pond-card">
-                <div class="card-header">
-                    <h2>Daily Hops 🌿</h2>
-                    <div class="progress-info">
-                        <div class="progress-bar"><div id="dailyProgress" class="progress-fill"></div></div>
-                        <span id="dailyProgressText">0%</span>
+        <main class="main-content">
+            <!-- Daily Goals Section -->
+            <section class="daily-goals">
+                <div class="section-header">
+                    <h2>🎯 Today's Goals</h2>
+                    <div class="progress-container">
+                        <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
+                        <span class="progress-text" id="dailyProgressText">0%</span>
                     </div>
                 </div>
-                <div class="input-row">
-                    <input type="text" id="dailyInput" placeholder="Add a new hop..." autocomplete="off">
-                    <button id="addDailyBtn" class="btn-pond">Add Hop 🌸</button>
+                <div class="input-group">
+                    <input type="text" id="dailyInput" class="goal-input" placeholder="Add a new daily goal..." autocomplete="off">
+                    <button class="btn btn-primary" id="addDailyBtn">+ Add Goal</button>
                 </div>
-                <ul id="dailyList" class="hops-list"></ul>
+                <ul class="goals-list" id="dailyList"></ul>
             </section>
 
-            <section class="pond-card">
-                <h3>Monthly 🍄</h3>
-                <div class="input-row">
-                    <input type="text" id="monthlyInput" placeholder="Monthly goal...">
-                    <button id="addMonthlyBtn" class="btn-pond">+</button>
-                </div>
-                <ul id="monthlyList" class="hops-list"></ul>
-            </section>
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <section class="monthly-goals">
+                    <div class="section-header">
+                        <h3>📆 Monthly</h3>
+                        <div class="mini-progress">
+                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="monthlyProgress"></div></div>
+                            <span id="monthlyProgressText" class="progress-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="input-group compact">
+                        <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
+                        <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
+                    </div>
+                    <ul class="goals-list compact" id="monthlyList"></ul>
+                </section>
+
+                <section class="yearly-goals">
+                    <div class="section-header">
+                        <h3>🎯 Yearly</h3>
+                        <div class="mini-progress">
+                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="yearlyProgress"></div></div>
+                            <span id="yearlyProgressText" class="progress-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="input-group compact">
+                        <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
+                        <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
+                    </div>
+                    <ul class="goals-list compact" id="yearlyList"></ul>
+                </section>
+            </aside>
         </main>
     </div>
 
-    <!-- Achievement Bar -->
-    <footer id="historyFooter" class="achievement-bar collapsed">
-        <div class="bar-header">
-            <div class="centered-controls">
-                <button id="historyToggle" class="btn-util">Achievement Bar ▼</button>
-                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
-                <button id="exportBtn" class="btn-util">Backup</button>
-                <label for="importFile" class="btn-util" role="button">Restore</label>
+    <!-- Collapsible History Footer -->
+    <div class="history-footer collapsed" id="historyFooter">
+        <div class="history-header" id="historyToggle">
+            <div class="history-title-group">
+                <h3>🏆 Achievement History <span id="historyChevron">▼</span></h3>
+                <button id="clearHistoryBtn" class="btn-text-only">Clear All History</button>
+            </div>
+            <div class="data-mgmt">
+                <button id="exportBtn" class="btn-data">💾 Backup</button>
+                <label for="importFile" class="btn-data">📂 Restore</label>
                 <input type="file" id="importFile" accept=".json" style="display:none;">
             </div>
         </div>
         
-        <div class="achievement-content">
-            <div class="achieve-left">
-                <h4>Goal History</h4>
-                <div id="moodHistoryList" class="history-list"></div>
+        <div class="history-content" id="historyContent">
+            <div class="history-section">
+                <h4>Daily Achievements</h4>
+                <div id="dailyHistoryList" class="history-grid"></div>
             </div>
-            <div class="achieve-right">
-                <h4>Progress Streak</h4>
-                <div class="streak-box">
-                    <span id="streakCount">0</span>
-                    <small>Day Streak</small>
-                </div>
+            <div class="history-section">
+                <h4>Monthly Achievements</h4>
+                <div id="monthlyHistoryList" class="history-grid"></div>
+            </div>
+            <div class="history-section">
+                <h4>Yearly Achievements</h4>
+                <div id="yearlyHistoryList" class="history-grid"></div>
             </div>
         </div>
-    </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
