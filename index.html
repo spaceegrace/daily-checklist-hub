@@ -3,135 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progress Pond 🐸</title>
+    <title>Froggie Goals Hub 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Removable Backup Banner -->
+    <!-- Simple Reminder Banner -->
     <div id="backupBanner" class="backup-banner">
-        <span>✨ Ribbit! Remember to backup your hops to keep them safe! 🌸</span>
-        <button id="bannerClose" class="btn-close-banner" aria-label="Dismiss">×</button>
+        <span>🌸 Ribbit! Remember to download a backup to keep your achievements safe! 🐸</span>
+        <button id="bannerClose" class="btn-close-banner" title="Dismiss">×</button>
     </div>
-
-    <!-- Side Drawer Toggle -->
-    <button id="drawerToggle" class="drawer-toggle" title="Open Health & Mood">🐸</button>
-
-    <!-- Side Drawer (Mood & Water) -->
-    <aside id="sideDrawer" class="side-drawer">
-        <button id="drawerClose" class="drawer-close">×</button>
-        <div class="drawer-content">
-            <div class="mood-tracker">
-                <p>How are you feeling today?</p>
-                <div class="mood-options">
-                    <button class="mood-btn" data-mood="happy" title="Happy">😊</button>
-                    <button class="mood-btn" data-mood="calm" title="Calm">😌</button>
-                    <button class="mood-btn" data-mood="focused" title="Focused">🧐</button>
-                    <button class="mood-btn" data-mood="tired" title="Sleepy">😴</button>
-                </div>
-            </div>
-
-            <div class="hydration-tracker">
-                <p>Daily Hydration 💧</p>
-                <div class="droplet-container" id="dropletContainer">
-                    <button class="drop-btn" data-index="0">💧</button>
-                    <button class="drop-btn" data-index="1">💧</button>
-                    <button class="drop-btn" data-index="2">💧</button>
-                    <button class="drop-btn" data-index="3">💧</button>
-                    <button class="drop-btn" data-index="4">💧</button>
-                    <button class="drop-btn" data-index="5">💧</button>
-                    <button class="drop-btn" data-index="6">💧</button>
-                    <button class="drop-btn" data-index="7">💧</button>
-                </div>
-            </div>
-        </div>
-    </aside>
 
     <div class="container">
         <header class="header">
-            <h1>✨ Progress Pond ✨</h1>
+            <h1>✨ 🐸 Froggie Goals Hub 🐸 ✨</h1>
             <p class="date" id="currentDate"></p>
         </header>
 
-        <main class="centered-content">
-            <section class="goal-card daily-section">
+        <main class="main-content">
+            <section class="daily-goals">
                 <div class="section-header">
-                    <h2>Daily Hops 🌿</h2>
-                    <div class="progress-wrap">
+                    <h2>🐸 Today's Hops</h2>
+                    <div class="progress-container">
                         <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
-                        <span id="dailyProgressText">0%</span>
-                        <small id="dailyCountText" class="count-badge">(0 of 0)</small>
+                        <span class="progress-text" id="dailyProgressText">0%</span>
                     </div>
                 </div>
-                
                 <div class="input-group">
-                    <input type="text" id="dailyInput" class="goal-input" placeholder="Next hop..." autocomplete="off">
-                    <select id="energyLevel" class="energy-select">
-                        <option value="high">⚡ High</option>
-                        <option value="low">☁️ Low</option>
-                    </select>
+                    <input type="text" id="dailyInput" class="goal-input" placeholder="New hop for today..." autocomplete="off">
                     <button class="btn btn-primary" id="addDailyBtn">Add Hop 🌸</button>
                 </div>
                 <ul class="goals-list" id="dailyList"></ul>
-
-                <div class="affirmation-container" id="frogAffirmation">
-                    <span class="sparkle">✨</span>
-                    <p id="affirmationText">You're doing amazing, hop-py froggy!</p>
-                    <span class="sparkle">✨</span>
-                </div>
             </section>
 
-            <section class="goal-card">
-                <h3>Monthly Hops 🍄</h3>
-                <div class="input-group">
-                    <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
-                    <button class="btn btn-primary" id="addMonthlyBtn">+</button>
-                </div>
-                <ul class="goals-list" id="monthlyList"></ul>
-            </section>
+            <aside class="sidebar">
+                <section class="monthly-goals">
+                    <div class="section-header">
+                        <h3>🍄 Monthly</h3>
+                        <div class="mini-progress">
+                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="monthlyProgress"></div></div>
+                            <span id="monthlyProgressText" class="progress-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="input-group compact">
+                        <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
+                        <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
+                    </div>
+                    <ul class="goals-list compact" id="monthlyList"></ul>
+                </section>
 
-            <section class="goal-card">
-                <h3>Yearly Hops 🌼</h3>
-                <div class="input-group">
-                    <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
-                    <button class="btn btn-primary" id="addYearlyBtn">+</button>
-                </div>
-                <ul class="goals-list" id="yearlyList"></ul>
-            </section>
+                <section class="yearly-goals">
+                    <div class="section-header">
+                        <h3>🌿 Yearly</h3>
+                        <div class="mini-progress">
+                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="yearlyProgress"></div></div>
+                            <span id="yearlyProgressText" class="progress-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="input-group compact">
+                        <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
+                        <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
+                    </div>
+                    <ul class="goals-list compact" id="yearlyList"></ul>
+                </section>
+            </aside>
         </main>
     </div>
 
-    <!-- Achievement Bar -->
-    <footer class="history-footer collapsed" id="historyFooter">
+    <!-- Collapsible History -->
+    <div class="history-footer collapsed" id="historyFooter">
         <div class="history-header" id="historyToggle">
             <div class="history-title-group">
-                <h3>Achievement Bar <span id="historyChevron">▼</span></h3>
-                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
+                <h3>👑 Froggy Achievements <span id="historyChevron">▼</span></h3>
+                <button id="clearHistoryBtn" class="btn-text-only">Clear All</button>
             </div>
             <div class="data-mgmt">
-                <button id="exportBtn" class="btn-util">Backup</button>
-                <label for="importFile" class="btn-util" role="button" tabindex="0">Restore</label>
+                <button id="exportBtn" class="btn-data">💾 Backup</button>
+                <label for="importFile" class="btn-data">📂 Restore</label>
                 <input type="file" id="importFile" accept=".json" style="display:none;">
             </div>
         </div>
         
         <div class="history-content" id="historyContent">
-            <div class="history-col-left">
-                <div class="hist-sub">
-                    <h4>🗓️ Daily Log</h4>
-                    <div id="moodHistoryList" class="mood-log-container"></div>
-                </div>
-                <div class="hist-sub"><h4>Monthly</h4><div id="monthlyHistoryList"></div></div>
-                <div class="hist-sub"><h4>Yearly</h4><div id="yearlyHistoryList"></div></div>
+            <div class="history-section">
+                <h4>Daily Lilypads</h4>
+                <div id="dailyHistoryList" class="history-grid"></div>
             </div>
-            <div class="history-col-right">
-                <div class="streak-box">
-                    <h4>🔥 Streak</h4>
-                    <span id="streakCount">0</span>
-                    <small>Days in a Row</small>
-                </div>
+            <div class="history-section">
+                <h4>Monthly Ponds</h4>
+                <div id="monthlyHistoryList" class="history-grid"></div>
+            </div>
+            <div class="history-section">
+                <h4>Yearly Forests</h4>
+                <div id="yearlyHistoryList" class="history-grid"></div>
             </div>
         </div>
-    </footer>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
