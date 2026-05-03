@@ -6,43 +6,42 @@
     --text-main: #1b4332;
 }
 
-body { 
-    font-family: 'Segoe UI', Roboto, sans-serif; 
-    background-color: var(--petal-pink); 
-    color: var(--text-main); 
-    margin: 0; padding-bottom: 120px;
+body { font-family: 'Segoe UI', sans-serif; background: var(--petal-pink); color: var(--text-main); margin: 0; padding-bottom: 120px; }
+.container { max-width: 650px; margin: 0 auto; padding: 20px; text-align: center; }
+
+/* Lily Pad Animation */
+.lily-pad-container { height: 160px; display: flex; justify-content: center; align-items: center; }
+.lily-pad-gif { 
+    width: 80px; 
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
 }
 
-.container { max-width: 700px; margin: 0 auto; padding: 20px; text-align: center; }
-
-/* --- Lily Pad Focus Timer --- */
-.pond-area { height: 180px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
-.lily-pad-visual {
-    width: 120px; height: 120px; background: var(--lily-pad); border-radius: 50%;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    border: 4px solid var(--frog-green); transition: 0.4s; position: relative;
-}
-
-.timer-display { font-weight: bold; font-size: 1.2rem; color: var(--frog-green); z-index: 2; }
-.timer-controls button { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 2px; }
-.frog-emoji { font-size: 1.5rem; margin-top: -5px; }
-
-/* --- Centered Layout --- */
-.main-content { display: flex; flex-direction: column; align-items: center; width: 100%; }
-.goal-box { width: 100%; background: white; border-radius: 16px; border: 2px solid var(--frog-green); padding: 24px; box-shadow: 6px 6px 0px var(--frog-green); margin-bottom: 24px; text-align: left; }
+/* Centered Layout */
+.centered-content { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+.goal-card { background: white; border-radius: 16px; border: 2px solid var(--frog-green); padding: 20px; box-shadow: 6px 6px 0 var(--frog-green); text-align: left; }
 
 .input-group { display: flex; gap: 10px; margin: 15px 0; }
-.goal-input { flex: 1; padding: 12px; border: 2px solid var(--frog-green); border-radius: 8px; }
-.btn-primary { background: var(--frog-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.goal-input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+.btn-primary { background: var(--frog-green); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
-/* --- Achievement Bar --- */
-.history-footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; max-width: 900px; background: var(--frog-green); border-radius: 12px 12px 0 0; color: white; }
-.history-content { display: grid; grid-template-columns: 0.8fr 1fr 1fr 1fr; gap: 15px; max-height: 250px; overflow-y: auto; padding: 0 20px 20px; }
-.history-footer.collapsed .history-content { max-height: 0; padding: 0; overflow: hidden; }
+/* History Footer 2-Column */
+.history-footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 95%; max-width: 800px; background: var(--frog-green); color: white; border-radius: 12px 12px 0 0; }
+.history-content { 
+    display: grid; 
+    grid-template-columns: 1.5fr 1fr; 
+    gap: 20px; 
+    padding: 0 20px 20px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+.history-col-left { display: flex; flex-direction: column; gap: 15px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px; }
+.streak-box { text-align: center; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 2px solid var(--pond-pink); }
+#streakCount { font-size: 3rem; font-weight: bold; color: var(--pond-pink); display: block; }
 
 /* Streak Milestone Classes */
 .streak-gold { color: #ffd700 !important; }
-.streak-sparkle { color: white !important; text-shadow: 0 0 10px #ff00de; animation: sparkle 1s infinite alternate; }
-@keyframes sparkle { from { opacity: 0.8; } to { opacity: 1; } }
+.streak-sparkle { text-shadow: 0 0 10px #fff, 0 0 20px #ff00de; animation: pulse 1s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
 
 .hidden { display: none; }
