@@ -14,54 +14,78 @@
     });
 
     function displayCurrentDate() {
-        const dateElement = document.getElementById('currentDate');
-        if (dateElement) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            dateElement.textContent = new Date().toLocaleDateString('en-US', options);
-        }
+        const el = document.getElementById('currentDate');
+        if (el) el.textContent = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
     }
 
+    // 2. Setup Event Listeners
     function setupEventListeners() {
         const types = ['daily', 'monthly', 'yearly'];
+        
         types.forEach(type => {
             const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
             
+            // Add Button
             const addBtn = document.getElementById(`add${capitalized}Btn`);
             if (addBtn) addBtn.addEventListener('click', () => addGoal(type));
             
-            const inputField = document.getElementById(`${type}Input`);
-            if (inputField) {
-                inputField.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') addGoal(type);
-                });
+            // Enter Key
+            const input = document.getElementById(`${type}Input`);
+            if (input) input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addGoal(type);
+            });
+
+            // Clear Completed
+            const clearBtn = document.getElementById(`clear${capitalized}CompletedBtn`);
+            if (clearBtn) clearBtn.addEventListener('click', () => clearGoals(type));
+        });
+
+        // Clear All Daily
+        const clearDailyAll = document.getElementById('clearDailyAllBtn');
+        if (clearDailyAll) clearDailyAll.addEventListener('click', () => {
+            if(confirm("Clear all daily goals?")) {
+                goalsData.daily = [];
+                saveGoals();
+                renderGoals('daily');
             }
         });
 
-        // Backup controls
-        const exportBtn = document.getElementById('exportBtn');
-        if (exportBtn) exportBtn.addEventListener('click', exportData);
+        // History Controls
+        const clearHistBtn = document.getElementById('clearHistoryBtn');
+        if (clearHistBtn) clearHistBtn.addEventListener('click', () => {
+            if (confirm("Clear all achievement history?")) {
+                goalsData.history = { daily: [], monthly: [], yearly: [] };
+                saveGoals();
+                renderMasterHistory();
+            }
+        });
+
+        // Backup/Restore
+        if (document.getElementById('exportBtn')) document.getElementById('exportBtn').addEventListener('click', exportData);
+        if (document.getElementById('importFile')) document.getElementById('importFile').addEventListener('change', importData);
     }
 
-    // 2. Persistent Storage Logic
+    // 3. Storage Logic
     function loadGoals() {
-        const saved = localStorage.getItem('GoalsHub_Persistent_v3');
+        const saved = localStorage.getItem('GoalsHub_v3_Persistent');
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                // Ensure history structure exists
                 if (!parsed.history) parsed.history = { daily: [], monthly: [], yearly: [] };
                 goalsData = parsed;
-            } catch (e) { console.error("Load failed", e); }
+            } catch (e) { console.error("Load failed"); }
         }
-        renderAllGoals();
+        ['daily', 'monthly', 'yearly'].forEach(renderGoals);
         renderMasterHistory();
     }
 
     function saveGoals() {
-        localStorage.setItem('GoalsHub_Persistent_v3', JSON.stringify(goalsData));
+        localStorage.setItem('GoalsHub_v3_Persistent', JSON.stringify(goalsData));
     }
 
-    // 3. Goal Actions
+    // 4. Core Goal Logic
     function addGoal(type) {
         const input = document.getElementById(`${type}Input`);
         if (!input || !input.value.trim()) return;
@@ -81,14 +105,17 @@
         const goal = goalsData[type].find(g => g.id === id);
         if (goal) {
             goal.completed = !goal.completed;
-            
             if (goal.completed) {
-                // Add to persistent history immediately
+                // Add to persistent history
                 goalsData.history[type].push({
                     text: goal.text,
-                    timestamp: new Date().toLocaleString(),
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    date: new Date().toLocaleDateString(),
                     id: Date.now()
                 });
+            } else {
+                // Remove from history if unchecked (Optional)
+                goalsData.history[type] = goalsData.history[type].filter(h => h.text !== goal.text);
             }
             saveGoals();
             renderGoals(type);
@@ -102,61 +129,79 @@
         renderGoals(type);
     };
 
-    // 4. Rendering UI
+    function clearGoals(type) {
+        goalsData[type] = goalsData[type].filter(g => !g.completed);
+        saveGoals();
+        renderGoals(type);
+    }
+
+    // 5. Rendering
     function renderGoals(type) {
         const list = document.getElementById(`${type}List`);
         if (!list) return;
-        
+
         list.innerHTML = goalsData[type].map(goal => `
             <li class="goal-item ${goal.completed ? 'completed' : ''}">
                 <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})" ${goal.completed ? 'checked' : ''}>
-                <span>${escapeHtml(goal.text)}</span>
-                <button onclick="deleteGoal('${type}', ${goal.id})">×</button>
+                <span class="goal-text">${goal.text}</span>
+                <button class="btn-delete" onclick="deleteGoal('${type}', ${goal.id})">×</button>
             </li>
-        `).join('') || '<li class="empty">No goals.</li>';
+        `).join('') || '<li class="empty-state">No goals yet.</li>';
+
+        updateProgress(type);
     }
 
-    function renderAllGoals() {
-        ['daily', 'monthly', 'yearly'].forEach(renderGoals);
+    function updateProgress(type) {
+        const bar = document.getElementById(`${type}Progress`);
+        const text = document.getElementById(`${type}ProgressText`);
+        if (!bar || !text) return;
+
+        const goals = goalsData[type];
+        const percent = goals.length ? Math.round((goals.filter(g => g.completed).length / goals.length) * 100) : 0;
+        bar.style.width = percent + '%';
+        text.textContent = percent + '%';
     }
 
-    // 5. The Master History Bar (Bottom Bar)
     function renderMasterHistory() {
-        const historyContainer = document.getElementById('masterHistoryBar');
-        if (!historyContainer) return;
+        const container = document.getElementById('masterHistoryBar');
+        if (!container) return;
 
-        // Combine all histories for a "Total History" view
-        const allHistory = [
+        const all = [
             ...goalsData.history.daily.map(h => ({...h, cat: 'Daily'})),
             ...goalsData.history.monthly.map(h => ({...h, cat: 'Monthly'})),
             ...goalsData.history.yearly.map(h => ({...h, cat: 'Yearly'}))
-        ].sort((a, b) => b.id - a.id); // Newest first
+        ].sort((a, b) => b.id - a.id);
 
-        if (allHistory.length === 0) {
-            historyContainer.innerHTML = '<p class="empty-msg">Finished goals will appear here.</p>';
-            return;
-        }
-
-        historyContainer.innerHTML = allHistory.map(h => `
+        container.innerHTML = all.map(h => `
             <div class="history-pill">
                 <span class="pill-cat">${h.cat}</span>
-                <span class="pill-text">${escapeHtml(h.text)}</span>
-                <span class="pill-time">${h.timestamp}</span>
+                <span class="pill-text">${h.text}</span>
+                <span class="pill-time">${h.date} | ${h.time}</span>
             </div>
-        `).join('');
+        `).join('') || '<span style="color:#666; font-size:0.8rem;">Finished goals appear here...</span>';
     }
 
+    // 6. Data Persistence
     function exportData() {
-        const blob = new Blob([JSON.stringify(goalsData)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(goalsData)], {type: 'application/json'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'goals_history_backup.json';
+        a.download = `goals_backup_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
     }
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+    function importData(e) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const imported = JSON.parse(event.target.result);
+                if (imported.daily && imported.history) {
+                    goalsData = imported;
+                    saveGoals();
+                    location.reload();
+                }
+            } catch (err) { alert('Invalid file.'); }
+        };
+        reader.readAsText(e.target.files[0]);
     }
 })();
