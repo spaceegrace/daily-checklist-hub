@@ -1,5 +1,3 @@
-/* --- Progress Pond Ultimate Kawaii CSS --- */
-
 :root {
     --frog: #9ed5a0;
     --dark-frog: #67a36a;
@@ -12,247 +10,86 @@
 }
 
 body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    font-family: 'Segoe UI', sans-serif; 
     background-color: var(--bg); 
     color: var(--txt); 
     margin: 0; 
-    padding-bottom: 120px; 
+    padding-bottom: 100px; 
+    touch-action: manipulation; /* Improves mobile tap response */
 }
 
 .container { 
+    width: 95%; 
     max-width: 450px; 
     margin: 0 auto; 
-    padding: 20px; 
+    padding: 15px 10px; 
     text-align: center; 
 }
 
-/* --- 💖 Cute Supporting Banner --- */
+/* --- Banner --- */
 .motivation-bar { 
     background: var(--pink); 
-    padding: 12px; 
+    padding: 10px; 
     font-weight: bold; 
     border-bottom: 3px dashed white; 
-    font-size: 1rem; 
-    position: sticky; 
-    top: 0; 
-    z-index: 1100; 
-    text-align: center; 
-    color: white; 
-    text-shadow: 1px 1px var(--txt); 
+    font-size: 0.85rem; 
+    position: sticky; top: 0; z-index: 1100;
+    color: white; text-shadow: 1px 1px var(--txt);
 }
 
-/* --- Pond Cards (Mood, Water, Hops) --- */
+/* --- Cards --- */
 .pond-card { 
     background: var(--soft); 
-    border-radius: 25px; 
+    border-radius: 20px; 
     border: 3px solid var(--frog); 
-    padding: 20px; 
-    box-shadow: 8px 8px 0px var(--pink); 
+    padding: 15px; 
+    box-shadow: 6px 6px 0px var(--pink); 
     text-align: left; 
-    margin-bottom: 25px; 
+    margin-bottom: 20px; 
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 
-/* --- Mood Tracker --- */
-.mood-options { 
+/* --- Mobile Grids --- */
+.mood-options, .droplet-row { 
     display: flex; 
     justify-content: space-between; 
-    margin-top: 10px; 
+    gap: 5px; 
 }
 
-.mood-btn { 
-    background: white; 
-    border: 2px solid var(--frog); 
-    border-radius: 50%; 
-    width: 45px; 
-    height: 45px; 
-    cursor: pointer; 
-    font-size: 1.2rem; 
-    transition: 0.2s; 
+.mood-btn, .drop-btn { 
+    background: white; border: 2px solid var(--frog); border-radius: 50%; 
+    width: 42px; height: 42px; /* Large tap target for thumbs */
+    cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; 
 }
 
-.mood-btn:active { 
-    transform: scale(0.9); 
-}
+.drop-btn.active { filter: grayscale(0%) opacity(1); background: var(--water-blue); border-color: var(--water-border); transform: scale(1.05); }
 
-/* --- Water Tracker Grid --- */
-.water-grid { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 10px; 
-    margin-top: 10px; 
-}
+/* --- Inputs --- */
+.input-row { display: flex; gap: 8px; margin: 10px 0; }
+input[type="text"] { flex: 1; padding: 12px; border: 2px solid var(--frog); border-radius: 10px; font-size: 16px; /* Prevents iOS zoom */ }
+.btn-pond { background: var(--frog); color: white; border-radius: 10px; border: none; padding: 0 15px; font-weight: bold; }
 
-.droplet-row { 
-    display: flex; 
-    justify-content: space-between; 
-}
-
-.drop-btn { 
-    background: white; 
-    border: 2px solid var(--frog); 
-    border-radius: 50%; 
-    width: 45px; 
-    height: 45px; 
-    cursor: pointer; 
-    font-size: 1.2rem; 
-    filter: grayscale(100%) opacity(0.4); 
-    transition: 0.3s; 
-}
-
-/* Water Logic: Droplet is blue when active */
-.drop-btn.active { 
-    filter: grayscale(0%) opacity(1) !important; 
-    background: var(--water-blue) !important; 
-    border-color: var(--water-border) !important; 
-    transform: scale(1.1); 
-}
-
-/* --- Daily Hops & Progress --- */
-.progress-wrap { 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-}
-
-.progress-bar { 
-    width: 80px; 
-    height: 8px; 
-    background: #e0f2e1; 
-    border-radius: 5px; 
-    overflow: hidden; 
-}
-
-.progress-fill { 
-    height: 100%; 
-    background: var(--frog); 
-    width: 0%; 
-    transition: 0.4s; 
-}
-
-.input-row { 
-    display: flex; 
-    gap: 8px; 
-    margin: 15px 0; 
-}
-
-input[type="text"] { 
-    flex: 1; 
-    padding: 10px; 
-    border: 2px solid var(--frog); 
-    border-radius: 12px; 
-    outline: none; 
-}
-
-.btn-pond { 
-    background: var(--frog); 
-    color: white; 
-    border-radius: 12px; 
-    border: none; 
-    padding: 8px 15px; 
-    cursor: pointer; 
-    font-weight: bold; 
-}
-
-.btn-pond:hover {
-    background: var(--dark-frog);
-}
-
-.hops-list {
-    list-style: none;
-    padding: 0;
-}
-
-/* --- Achievement Bar (Collapsible Footer) --- */
+/* --- Achievement Bar (Mobile Friendly) --- */
 .achievement-bar { 
-    position: fixed; 
-    bottom: 0; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    width: 95%; 
-    max-width: 600px; 
-    background: var(--dark-frog); 
-    color: white; 
-    border-radius: 20px 20px 0 0; 
-    transition: 0.3s; 
-    z-index: 1000; 
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
+    width: 100%; /* Full width on mobile */
+    max-width: 600px; background: var(--dark-frog); color: white; 
+    border-radius: 20px 20px 0 0; z-index: 1200; 
 }
 
-.bar-header { 
-    padding: 10px; 
-    border-bottom: 1px solid rgba(255,255,255,0.2); 
-}
-
-.centered-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-util { 
-    background: rgba(255,255,255,0.15); 
-    border: 1px solid white; 
-    color: white; 
-    padding: 6px 12px; 
-    border-radius: 10px; 
-    font-size: 0.75rem; 
-    cursor: pointer; 
-    margin: 0 5px; 
-    font-weight: bold; 
-}
-
-.btn-util:hover {
-    background: rgba(255,255,255,0.3);
-}
+.bar-header { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+.btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
 
 .achievement-content { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 20px; 
-    padding: 20px; 
-    max-height: 250px; 
-    overflow-y: auto; 
+    display: flex; flex-direction: column; /* Stack vertically on mobile */
+    gap: 15px; padding: 15px; max-height: 60vh; overflow-y: auto; 
 }
 
-.achievement-bar.collapsed .achievement-content { 
-    max-height: 0; 
-    padding: 0; 
-    overflow: hidden; 
-}
+/* --- Streak Badge --- */
+.streak-section { text-align: center; background: rgba(0,0,0,0.1); border-radius: 15px; padding: 10px; margin-bottom: 10px; }
+.streak-badge { display: flex; align-items: center; justify-content: center; gap: 8px; }
+#streakCount { font-size: 2rem; font-weight: bold; color: var(--pink); text-shadow: 1px 1px white; }
 
-.achieve-col h4 {
-    margin-top: 0;
-    font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    padding-bottom: 5px;
-}
-
-.history-list div { 
-    font-size: 0.75rem; 
-    margin-bottom: 6px; 
-    border-bottom: 1px solid rgba(255,255,255,0.1); 
-    padding-bottom: 2px; 
-}
-
-/* --- Misc UI --- */
-.count-badge { 
-    font-size: 0.8rem; 
-    background: var(--frog); 
-    color: white; 
-    padding: 2px 8px; 
-    border-radius: 10px; 
-}
-
-.date-display {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: var(--dark-frog);
-    margin-top: -10px;
-    margin-bottom: 20px;
-}
+.history-list div { font-size: 0.75rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.achievement-bar.collapsed .achievement-content { display: none; }
