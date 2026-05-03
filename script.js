@@ -1,15 +1,10 @@
-// Daily Goals Hub - Updated Full Script
 (() => {
-    // 1. State Management with Section-Specific History
+    // 1. State Management (v3 with grouped history)
     let goalsData = {
         daily: [],
         monthly: [],
         yearly: [],
-        history: {
-            daily: [],
-            monthly: [],
-            yearly: []
-        }
+        history: { daily: [], monthly: [], yearly: [] }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -26,7 +21,6 @@
         }
     }
 
-    // 2. Safe Event Listeners (Checks if elements exist)
     function setupEventListeners() {
         const types = ['daily', 'monthly', 'yearly'];
         types.forEach(type => {
@@ -41,60 +35,46 @@
                     if (e.key === 'Enter') addGoal(type);
                 });
             }
-
-            const clearBtn = document.getElementById(`clear${capitalized}CompletedBtn`);
-            if (clearBtn) clearBtn.addEventListener('click', () => clearGoals(type));
         });
 
-        const histFilter = document.getElementById('historyFilter');
-        if (histFilter) histFilter.addEventListener('change', renderHistory);
-        
+        // Backup controls
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) exportBtn.addEventListener('click', exportData);
-        
-        const importInput = document.getElementById('importFile');
-        if (importInput) importInput.addEventListener('change', importData);
     }
 
-    // 3. Storage Logic
+    // 2. Persistent Storage Logic
     function loadGoals() {
-        const data = localStorage.getItem('goalsHub_v2');
-        if (data) {
+        const saved = localStorage.getItem('GoalsHub_Persistent_v3');
+        if (saved) {
             try {
-                const parsed = JSON.parse(data);
-                // Basic check to ensure history is formatted correctly
-                if (parsed && typeof parsed.history === 'object' && !Array.isArray(parsed.history)) {
-                    goalsData = parsed;
-                }
+                const parsed = JSON.parse(saved);
+                // Ensure history structure exists
+                if (!parsed.history) parsed.history = { daily: [], monthly: [], yearly: [] };
+                goalsData = parsed;
             } catch (e) { console.error("Load failed", e); }
         }
         renderAllGoals();
-        renderHistory();
+        renderMasterHistory();
     }
 
     function saveGoals() {
-        localStorage.setItem('goalsHub_v2', JSON.stringify(goalsData));
+        localStorage.setItem('GoalsHub_Persistent_v3', JSON.stringify(goalsData));
     }
 
-    // 4. Core Goal Actions
+    // 3. Goal Actions
     function addGoal(type) {
         const input = document.getElementById(`${type}Input`);
-        if (!input) return;
-        
-        const text = input.value.trim();
-        if (!text) return alert('Please enter a goal!');
+        if (!input || !input.value.trim()) return;
 
         goalsData[type].push({
             id: Date.now(),
-            text: text,
-            completed: false,
-            createdAt: new Date().toISOString()
+            text: input.value.trim(),
+            completed: false
         });
 
         saveGoals();
         renderGoals(type);
         input.value = '';
-        input.focus();
     }
 
     window.toggleGoal = (type, id) => {
@@ -102,18 +82,17 @@
         if (goal) {
             goal.completed = !goal.completed;
             
-            // Log to the specific category history
             if (goal.completed) {
-                if (!goalsData.history[type]) goalsData.history[type] = [];
+                // Add to persistent history immediately
                 goalsData.history[type].push({
                     text: goal.text,
-                    date: new Date().toISOString()
+                    timestamp: new Date().toLocaleString(),
+                    id: Date.now()
                 });
             }
-            
             saveGoals();
             renderGoals(type);
-            renderHistory();
+            renderMasterHistory();
         }
     };
 
@@ -123,83 +102,61 @@
         renderGoals(type);
     };
 
-    function clearGoals(type) {
-        if (!confirm(`Clear completed ${type} goals?`)) return;
-        goalsData[type] = goalsData[type].filter(g => !g.completed);
-        saveGoals();
-        renderGoals(type);
-    }
-
-    // 5. Rendering (Null-Safe)
+    // 4. Rendering UI
     function renderGoals(type) {
         const list = document.getElementById(`${type}List`);
         if (!list) return;
         
-        const goals = goalsData[type];
-        if (goals.length === 0) {
-            list.innerHTML = '<li class="empty-state">No goals yet. 🚀</li>';
-            return;
-        }
-
-        list.innerHTML = goals.map(goal => `
+        list.innerHTML = goalsData[type].map(goal => `
             <li class="goal-item ${goal.completed ? 'completed' : ''}">
                 <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})" ${goal.completed ? 'checked' : ''}>
-                <span class="goal-text">${goal.text}</span>
-                <button onclick="deleteGoal('${type}', ${goal.id})">Delete</button>
+                <span>${escapeHtml(goal.text)}</span>
+                <button onclick="deleteGoal('${type}', ${goal.id})">×</button>
             </li>
-        `).join('');
+        `).join('') || '<li class="empty">No goals.</li>';
     }
 
     function renderAllGoals() {
         ['daily', 'monthly', 'yearly'].forEach(renderGoals);
     }
 
-    function renderHistory() {
-        const list = document.getElementById('historyList');
-        if (!list) return;
+    // 5. The Master History Bar (Bottom Bar)
+    function renderMasterHistory() {
+        const historyContainer = document.getElementById('masterHistoryBar');
+        if (!historyContainer) return;
 
-        const filterEl = document.getElementById('historyFilter');
-        const filter = filterEl ? filterEl.value : 'daily'; // Fallback if missing
-        
-        let history = [...(goalsData.history[filter] || [])].reverse();
-        if (history.length === 0) {
-            list.innerHTML = `<li class="empty-state">No ${filter} history.</li>`;
+        // Combine all histories for a "Total History" view
+        const allHistory = [
+            ...goalsData.history.daily.map(h => ({...h, cat: 'Daily'})),
+            ...goalsData.history.monthly.map(h => ({...h, cat: 'Monthly'})),
+            ...goalsData.history.yearly.map(h => ({...h, cat: 'Yearly'}))
+        ].sort((a, b) => b.id - a.id); // Newest first
+
+        if (allHistory.length === 0) {
+            historyContainer.innerHTML = '<p class="empty-msg">Finished goals will appear here.</p>';
             return;
         }
 
-        list.innerHTML = history.map(h => `
-            <li class="history-item">
-                <span>${h.text}</span>
-                <small>${new Date(h.date).toLocaleDateString()}</small>
-            </li>
+        historyContainer.innerHTML = allHistory.map(h => `
+            <div class="history-pill">
+                <span class="pill-cat">${h.cat}</span>
+                <span class="pill-text">${escapeHtml(h.text)}</span>
+                <span class="pill-time">${h.timestamp}</span>
+            </div>
         `).join('');
     }
 
-    // 6. Data Persistence (Export/Import)
     function exportData() {
-        const blob = new Blob([JSON.stringify(goalsData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        const blob = new Blob([JSON.stringify(goalsData)], { type: 'application/json' });
         const a = document.createElement('a');
-        a.href = url;
-        a.download = `goals_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.href = URL.createObjectURL(blob);
+        a.download = 'goals_history_backup.json';
         a.click();
     }
 
-    function importData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const imported = JSON.parse(e.target.result);
-                if (imported.daily && imported.history) {
-                    goalsData = imported;
-                    saveGoals();
-                    location.reload(); // Refresh to apply changes
-                }
-            } catch (err) { alert('Invalid backup file.'); }
-        };
-        reader.readAsText(file);
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 })();
