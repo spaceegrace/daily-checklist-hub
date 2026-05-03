@@ -1,56 +1,84 @@
 (() => {
     let pondData = {
         daily: [],
-        history: [], // For Hops
-        moodLog: [], // For Mood entries
+        history: [],
+        moodLog: [],
         waterCount: 0
     };
 
     const moodEmojis = { Happy: "😊", Calm: "😌", Focused: "🧐", Tired: "😴", Grumpy: "😠" };
+    const frogQuotes = [
+        "✨ Ribbit! Let's make some waves today! 🌸",
+        "🌿 Every hop counts, no matter how small! 🐸",
+        "🌼 You're doing amazing, hop-py froggy! ✨",
+        "🍄 Take a breath and enjoy the pond! 😌",
+        "🌊 Stay hydrated and keep jumping! 💧",
+        "✨ The pond is proud of you today! 🐸"
+    ];
 
     document.addEventListener('DOMContentLoaded', () => {
         initDate();
         load();
         events();
+        rotateMotivation();
     });
 
     function events() {
-        // Daily Hops
         document.getElementById('addDailyBtn').onclick = () => addHop();
         document.getElementById('dailyInput').onkeydown = (e) => { if(e.key==='Enter') addHop(); };
 
-        // Mood Tracker (Tracks various entries throughout the day)
+        // Mood Logging
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = () => {
                 const mood = btn.dataset.mood;
                 pondData.moodLog.push({
-                    mood,
+                    type: 'mood',
+                    val: mood,
+                    icon: moodEmojis[mood],
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     id: Date.now()
                 });
                 save(); renderHistory();
-                alert(`Mood logged: ${mood} ${moodEmojis[mood]}`);
             };
         });
 
-        // Water Tracker
+        // Water Logging (Logs each glass with time)
         document.querySelectorAll('.drop-btn').forEach((btn, i) => {
             btn.onclick = () => {
-                pondData.waterCount = pondData.waterCount === i + 1 ? i : i + 1;
-                renderWater(); save();
+                const isAdding = i >= pondData.waterCount;
+                pondData.waterCount = i + 1;
+                
+                if (isAdding) {
+                    pondData.moodLog.push({
+                        type: 'water',
+                        val: 'Glass of Water',
+                        icon: '💧',
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        id: Date.now()
+                    });
+                }
+                renderWater(); save(); renderHistory();
             };
         });
 
-        // UI Controls
         document.getElementById('historyToggle').onclick = () => {
             document.getElementById('historyFooter').classList.toggle('collapsed');
         };
-        document.getElementById('bannerClose').onclick = () => document.getElementById('backupBanner').classList.add('hidden');
-        document.getElementById('exportBtn').onclick = exportData;
+
+        // Reset Pond (Clears current active items and today's water)
+        document.getElementById('resetPondBtn').onclick = () => {
+            if(confirm("Reset today's hops and water? (History will remain)")) {
+                pondData.daily = [];
+                pondData.waterCount = 0;
+                save(); renderActive(); renderWater();
+            }
+        };
+
+        // Clear History (Permanent wipe)
         document.getElementById('clearHistoryBtn').onclick = () => {
-            if(confirm("Clear all your pond achievements?")) {
-                pondData.history = []; pondData.moodLog = []; pondData.waterCount = 0;
-                save(); location.reload();
+            if(confirm("Permanently delete ALL history logs?")) {
+                pondData.history = []; pondData.moodLog = [];
+                save(); renderHistory();
             }
         };
     }
@@ -65,15 +93,20 @@
     window.toggleHop = (id) => {
         const idx = pondData.daily.findIndex(g => g.id === id);
         if(idx > -1) {
-            const item = pondData.daily.splice(idx, 1)[0];
+            const item = pondData.daily.splice(idx, 1);
             pondData.history.push({ 
-                text: item.text, 
+                text: item[0].text, 
                 time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                 id: Date.now() 
             });
             save(); renderActive(); renderHistory();
         }
     };
+
+    function rotateMotivation() {
+        const text = document.getElementById('motivationText');
+        text.textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)];
+    }
 
     function renderActive() {
         const list = document.getElementById('dailyList');
@@ -87,21 +120,18 @@
     }
 
     function renderHistory() {
-        // Daily Log
         document.getElementById('dailyHistoryList').innerHTML = [...pondData.history].reverse().map(h => `
             <div style="font-size:0.8rem; margin-bottom:5px; color:white;">🌿 ${h.text} <small style="opacity:0.6">(${h.time})</small></div>
         `).join('') || '<span>-</span>';
 
-        // Mood & Water Log
         const moodHtml = [...pondData.moodLog].reverse().map(m => `
-            <div style="font-size:0.8rem; margin-bottom:5px; color:white;">${moodEmojis[m.mood]} ${m.mood} <small style="opacity:0.6">(${m.time})</small></div>
+            <div style="font-size:0.8rem; margin-bottom:5px; color:white;">${m.icon} ${m.val} <small style="opacity:0.6">(${m.time})</small></div>
         `).join('');
         document.getElementById('moodHistoryList').innerHTML = moodHtml || '<span>No entries yet</span>';
     }
 
     function renderWater() {
-        const drops = document.querySelectorAll('.drop-btn');
-        drops.forEach((btn, i) => {
+        document.querySelectorAll('.drop-btn').forEach((btn, i) => {
             i < pondData.waterCount ? btn.classList.add('active') : btn.classList.remove('active');
         });
         document.getElementById('waterCountText').textContent = `${pondData.waterCount} / 8 glasses`;
@@ -114,17 +144,12 @@
         document.getElementById('dailyProgress').style.width = percent + '%';
     }
 
-    function save() { localStorage.setItem('Simplified_Pond', JSON.stringify(pondData)); }
+    function save() { localStorage.setItem('Simplified_Pond_V2', JSON.stringify(pondData)); }
     function load() {
-        const s = localStorage.getItem('Simplified_Pond');
+        const s = localStorage.getItem('Simplified_Pond_V2');
         if(s) pondData = JSON.parse(s);
         renderActive(); renderHistory(); renderWater();
     }
 
     function initDate() { document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'}); }
-
-    function exportData() {
-        const blob = new Blob([JSON.stringify(pondData)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "ProgressPond_Backup.json"; a.click();
-    }
 })();
