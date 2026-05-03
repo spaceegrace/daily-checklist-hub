@@ -3,65 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Froggie Focus Hub 🐸</title>
+    <title>Progress Pod 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="backupBanner" class="backup-banner">
-        <span>🌸 Ribbit! Backup your achievements to keep them safe! 🐸</span>
+        <span>🛡️ Ribbit! Remember to download a backup to keep your achievements safe! 🐸</span>
         <button id="bannerClose" class="btn-close-banner">×</button>
     </div>
 
     <div class="container">
         <header class="header">
-            <h1>Froggie Focus Hub 🐸</h1>
+            <h1>Progress Pod 🐸</h1>
             <p class="date" id="currentDate"></p>
         </header>
 
-        <!-- Focus Timer Lily Pad -->
-        <div class="pond-area">
-            <div id="magicLilyPad" class="lily-pad-visual">
-                <div class="timer-display">
-                    <span id="timerText">25:00</span>
-                    <div class="timer-controls">
-                        <button id="startTimer" aria-label="Start Timer">▶️</button>
-                        <button id="resetTimer" aria-label="Reset Timer">🔄</button>
-                    </div>
-                </div>
-                <span class="frog-emoji">🐸</span>
-            </div>
+        <!-- Dynamic Lily Pad GIF -->
+        <div class="lily-pad-container">
+            <img src="https://giphy.com" 
+                 id="growingLilyPad" 
+                 class="lily-pad-gif" 
+                 alt="Growing Lily Pad">
         </div>
 
-        <main class="main-content">
-            <!-- All Sections Centered in a Single Column -->
-            <section class="goal-box daily-goals">
+        <main class="centered-content">
+            <section class="goal-card daily-section">
                 <div class="section-header">
                     <h2>Today's Hops</h2>
-                    <div class="progress-container">
+                    <div class="progress-wrap">
                         <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
                         <span id="dailyProgressText">0%</span>
                     </div>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="dailyInput" class="goal-input" placeholder="Next hop? (Ctrl + Enter)">
+                    <input type="text" id="dailyInput" class="goal-input" placeholder="Next daily hop...">
                     <button class="btn btn-primary" id="addDailyBtn">Add Hop</button>
                 </div>
                 <ul class="goals-list" id="dailyList"></ul>
             </section>
 
-            <section class="goal-box monthly-goals">
+            <section class="goal-card">
                 <h3>🍄 Monthly</h3>
                 <div class="input-group">
-                    <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
+                    <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly hop...">
                     <button class="btn btn-primary" id="addMonthlyBtn">+</button>
                 </div>
                 <ul class="goals-list" id="monthlyList"></ul>
             </section>
 
-            <section class="goal-box yearly-goals">
+            <section class="goal-card">
                 <h3>🌿 Yearly</h3>
                 <div class="input-group">
-                    <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
+                    <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly hop...">
                     <button class="btn btn-primary" id="addYearlyBtn">+</button>
                 </div>
                 <ul class="goals-list" id="yearlyList"></ul>
@@ -69,11 +62,10 @@
         </main>
     </div>
 
-    <!-- Achievement Pond -->
     <footer class="history-footer collapsed" id="historyFooter">
         <div class="history-header" id="historyToggle">
             <div class="history-title-group">
-                <h3>Achievement Pond <span id="historyChevron">▼</span></h3>
+                <h3>Progress Pod <span id="historyChevron">▼</span></h3>
                 <button id="clearHistoryBtn" class="btn-util">Clear All</button>
             </div>
             <div class="data-mgmt">
@@ -84,21 +76,19 @@
         </div>
         
         <div class="history-content" id="historyContent">
-            <div class="history-section streak-highlight">
-                <h4>🔥 My Streak</h4>
-                <div class="streak-card"><span id="streakCount">0</span><small>Days</small></div>
+            <!-- Left Column: History Lists -->
+            <div class="history-col-left">
+                <div class="hist-sub"><h4>Daily</h4><div id="dailyHistoryList"></div></div>
+                <div class="hist-sub"><h4>Monthly</h4><div id="monthlyHistoryList"></div></div>
+                <div class="hist-sub"><h4>Yearly</h4><div id="yearlyHistoryList"></div></div>
             </div>
-            <div class="history-section">
-                <h4>Daily</h4>
-                <div id="dailyHistoryList"></div>
-            </div>
-            <div class="history-section">
-                <h4>Monthly</h4>
-                <div id="monthlyHistoryList"></div>
-            </div>
-            <div class="history-section">
-                <h4>Yearly</h4>
-                <div id="yearlyHistoryList"></div>
+            <!-- Right Column: Streak -->
+            <div class="history-col-right">
+                <div class="streak-box">
+                    <h4>🔥 Current Streak</h4>
+                    <span id="streakCount">0</span>
+                    <small>Consecutive Days</small>
+                </div>
             </div>
         </div>
     </footer>
