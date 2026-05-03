@@ -15,46 +15,38 @@
         </header>
 
         <main class="main-content">
-            <!-- Daily Goals Section (Main) -->
+            <!-- Daily Goals Section -->
             <section class="daily-goals">
                 <div class="section-header">
                     <h2>🎯 Today's Goals</h2>
                     <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="dailyProgress"></div>
-                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="dailyProgress"></div></div>
                         <span class="progress-text" id="dailyProgressText">0%</span>
                     </div>
                 </div>
-
                 <div class="input-group">
                     <input type="text" id="dailyInput" class="goal-input" placeholder="Add a new daily goal..." autocomplete="off">
                     <button class="btn btn-primary" id="addDailyBtn">+ Add Goal</button>
                 </div>
-
                 <ul class="goals-list" id="dailyList"></ul>
-
                 <div class="action-buttons">
                     <button class="btn btn-secondary" id="clearDailyCompletedBtn">Clear Completed</button>
                     <button class="btn btn-secondary" id="clearDailyAllBtn">Clear All</button>
                 </div>
             </section>
 
-            <!-- Sidebar with Monthly and Yearly Goals -->
+            <!-- Sidebar -->
             <aside class="sidebar">
-                <!-- Monthly Goals -->
                 <section class="monthly-goals">
                     <div class="section-header">
-                        <h3>📆 Monthly Goals</h3>
+                        <h3>📆 Monthly</h3>
                         <div class="mini-progress">
-                            <div class="mini-progress-bar">
-                                <div class="mini-progress-fill" id="monthlyProgress"></div>
-                            </div>
-                            <span class="mini-progress-text" id="monthlyProgressText">0%</span>
+                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="monthlyProgress"></div></div>
+                            <span id="monthlyProgressText">0%</span>
                         </div>
                     </div>
                     <div class="input-group compact">
-                        <input type="text" id="monthlyInput" class="goal-input" placeholder="Add monthly goal..." autocomplete="off">
+                        <input type="text" id="monthlyInput" class="goal-input" placeholder="Monthly goal...">
                         <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
                     </div>
                     <ul class="goals-list compact" id="monthlyList"></ul>
@@ -63,19 +55,16 @@
                     </div>
                 </section>
 
-                <!-- Yearly Goals -->
                 <section class="yearly-goals">
                     <div class="section-header">
-                        <h3>🎯 Yearly Goals</h3>
+                        <h3>🎯 Yearly</h3>
                         <div class="mini-progress">
-                            <div class="mini-progress-bar">
-                                <div class="mini-progress-fill" id="yearlyProgress"></div>
-                            </div>
-                            <span class="mini-progress-text" id="yearlyProgressText">0%</span>
+                            <div class="mini-progress-bar"><div class="mini-progress-fill" id="yearlyProgress"></div></div>
+                            <span id="yearlyProgressText">0%</span>
                         </div>
                     </div>
                     <div class="input-group compact">
-                        <input type="text" id="yearlyInput" class="goal-input" placeholder="Add yearly goal..." autocomplete="off">
+                        <input type="text" id="yearlyInput" class="goal-input" placeholder="Yearly goal...">
                         <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
                     </div>
                     <ul class="goals-list compact" id="yearlyList"></ul>
@@ -87,12 +76,12 @@
         </main>
     </div>
 
-    <!-- Persistent Master History Bar (Bottom Bar) -->
-    <div class="history-footer">
-        <div class="history-header">
+    <!-- Collapsible History Footer -->
+    <div class="history-footer collapsed" id="historyFooter">
+        <div class="history-header" id="historyToggle">
             <div class="history-title-group">
-                <h3>🏆 Achievement History</h3>
-                <button id="clearHistoryBtn" class="btn-text-only">Clear History</button>
+                <h3>🏆 Achievement History <span id="historyChevron">▼</span></h3>
+                <button id="clearHistoryBtn" class="btn-text-only">Clear All</button>
             </div>
             <div class="data-mgmt">
                 <button id="exportBtn" class="btn-data">💾 Backup</button>
@@ -100,8 +89,20 @@
                 <input type="file" id="importFile" accept=".json" style="display:none;">
             </div>
         </div>
-        <div id="masterHistoryBar" class="history-scroll-container">
-            <!-- Completed goals from all categories will flow here -->
+        
+        <div class="history-content" id="historyContent">
+            <div class="history-section">
+                <h4>Daily Achievements</h4>
+                <div id="dailyHistoryList" class="history-grid"></div>
+            </div>
+            <div class="history-section">
+                <h4>Monthly Achievements</h4>
+                <div id="monthlyHistoryList" class="history-grid"></div>
+            </div>
+            <div class="history-section">
+                <h4>Yearly Achievements</h4>
+                <div id="yearlyHistoryList" class="history-grid"></div>
+            </div>
         </div>
     </div>
 
