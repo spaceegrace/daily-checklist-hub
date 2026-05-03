@@ -19,7 +19,7 @@ body {
     margin: 0; 
     padding-bottom: 120px; 
     overflow-x: hidden;
-    touch-action: manipulation; /* Optimizes mobile tapping */
+    touch-action: manipulation;
 }
 
 .container { 
@@ -41,11 +41,11 @@ body {
     top: 0; 
     z-index: 1100;
     
-    /* Centering logic for both Desktop & Mobile */
+    /* Centering logic */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    justify-content: center; 
+    align-items: center;     
+    text-align: center;      
     
     color: white; 
     text-shadow: 1px 1px rgba(0,0,0,0.1);
@@ -53,7 +53,13 @@ body {
     box-sizing: border-box;
 }
 
-/* --- Pond Cards (Mood, Water, Hops) --- */
+/* Force the text inside the banner to fill the width for centering */
+.motivation-bar span {
+    width: 100%;
+    display: block;
+}
+
+/* --- Pond Cards --- */
 .pond-card { 
     background: var(--soft); 
     border-radius: 20px; 
@@ -71,7 +77,7 @@ body {
     margin-bottom: 15px; 
 }
 
-/* --- Grids (Mobile & Desktop Friendly) --- */
+/* --- Grids --- */
 .mood-options, .droplet-row { 
     display: flex; 
     justify-content: space-between; 
@@ -118,7 +124,7 @@ input[type="text"] {
     border: 2px solid var(--frog); 
     border-radius: 12px; 
     outline: none; 
-    font-size: 16px; /* Prevents auto-zoom on iOS */
+    font-size: 16px; 
 }
 
 .btn-pond { 
@@ -161,7 +167,7 @@ input[type="text"] {
     transition: 0.5s; 
 }
 
-/* --- Achievement Bar (Collapsible Footer) --- */
+/* --- Achievement Bar --- */
 .achievement-bar { 
     position: fixed; 
     bottom: 0; 
@@ -203,7 +209,6 @@ input[type="text"] {
     overflow-y: auto; 
 }
 
-/* Toggle logic for JS */
 .achievement-bar.collapsed .achievement-content { 
     display: none; 
 }
