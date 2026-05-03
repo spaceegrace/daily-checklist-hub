@@ -1,15 +1,13 @@
 (() => {
     let goalsData = {
         daily: [], monthly: [], yearly: [],
-        history: { daily: [], monthly: [], yearly: [] },
-        lastBackup: null
+        history: { daily: [], monthly: [], yearly: [] }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         displayCurrentDate();
         loadGoals();
         setupEventListeners();
-        checkBackupReminder();
     });
 
     function setupEventListeners() {
@@ -21,7 +19,13 @@
             });
         });
 
-        // Toggle History
+        // Banner Controls
+        document.getElementById('bannerClose')?.addEventListener('click', () => {
+            document.getElementById('backupBanner').classList.add('hidden');
+        });
+        document.getElementById('bannerExportBtn')?.addEventListener('click', () => exportData(true));
+
+        // History Controls
         document.getElementById('historyToggle')?.addEventListener('click', (e) => {
             if(!['BUTTON', 'LABEL', 'INPUT'].includes(e.target.tagName)) {
                 document.getElementById('historyFooter').classList.toggle('collapsed');
@@ -31,8 +35,7 @@
         document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
             if(confirm("Permanently delete ALL achievement history?")) { 
                 goalsData.history = { daily: [], monthly: [], yearly: [] }; 
-                saveGoals(); 
-                renderMasterHistory(); 
+                saveGoals(); renderMasterHistory(); 
             }
         });
 
@@ -43,7 +46,7 @@
     function loadGoals() {
         const saved = localStorage.getItem('GoalsHub_v5_Final');
         if (saved) {
-            try { goalsData = JSON.parse(saved); } catch(e) { console.error("Data load failed"); }
+            try { goalsData = JSON.parse(saved); } catch(e) { console.error("Load failed"); }
         }
         ['daily', 'monthly', 'yearly'].forEach(renderGoals);
         renderMasterHistory();
@@ -55,9 +58,7 @@
         const input = document.getElementById(`${type}Input`);
         if (!input?.value.trim()) return;
         goalsData[type].push({ id: Date.now(), text: input.value.trim(), completed: false });
-        saveGoals(); 
-        renderGoals(type); 
-        input.value = '';
+        saveGoals(); renderGoals(type); input.value = '';
     }
 
     window.toggleGoal = (type, id) => {
@@ -66,27 +67,22 @@
             goal.completed = !goal.completed;
             if (goal.completed) {
                 goalsData.history[type].push({ 
-                    text: goal.text, 
-                    id: Date.now(), 
+                    text: goal.text, id: Date.now(), 
                     time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) 
                 });
             }
-            saveGoals(); 
-            renderGoals(type); 
-            renderMasterHistory();
+            saveGoals(); renderGoals(type); renderMasterHistory();
         }
     };
 
     window.deleteGoal = (type, id) => {
         goalsData[type] = goalsData[type].filter(g => g.id !== id);
-        saveGoals(); 
-        renderGoals(type);
+        saveGoals(); renderGoals(type);
     };
 
     window.deleteHistoryItem = (type, id) => {
         goalsData.history[type] = goalsData.history[type].filter(h => h.id !== id);
-        saveGoals(); 
-        renderMasterHistory();
+        saveGoals(); renderMasterHistory();
     };
 
     function renderGoals(type) {
@@ -96,9 +92,9 @@
             <li class="goal-item ${goal.completed ? 'completed' : ''}">
                 <input type="checkbox" onchange="toggleGoal('${type}', ${goal.id})" ${goal.completed ? 'checked' : ''}>
                 <span>${escapeHtml(goal.text)}</span>
-                <button class="btn-delete" onclick="deleteGoal('${type}', ${goal.id})" title="Delete Goal">×</button>
+                <button class="btn-delete" onclick="deleteGoal('${type}', ${goal.id})">×</button>
             </li>
-        `).join('') || '<li style="color:#94a3b8; font-size:0.8rem; padding: 10px 0;">No active goals...</li>';
+        `).join('') || '<li style="color:#94a3b8; font-size:0.8rem; padding:10px 0;">No goals yet...</li>';
         updateProgress(type);
     }
 
@@ -108,13 +104,10 @@
             if (!container) return;
             container.innerHTML = [...goalsData.history[type]].reverse().map(h => `
                 <div class="history-pill">
-                    <div>
-                        <span class="pill-text">${escapeHtml(h.text)}</span>
-                        <span class="pill-time">${h.time}</span>
-                    </div>
-                    <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${h.id})" title="Remove from history">×</button>
+                    <div><span class="pill-text">${escapeHtml(h.text)}</span><span class="pill-time">${h.time}</span></div>
+                    <button class="btn-hist-delete" onclick="deleteHistoryItem('${type}', ${h.id})">×</button>
                 </div>
-            `).join('') || '<span style="color:#64748b; font-size:0.7rem;">No achievements yet</span>';
+            `).join('') || '<span style="color:#64748b; font-size:0.7rem;">Empty</span>';
         });
     }
 
@@ -127,34 +120,19 @@
         if (text) text.textContent = percent + '%';
     }
 
-    function checkBackupReminder() {
-        const now = Date.now();
-        if (!goalsData.lastBackup || (now - goalsData.lastBackup > 259200000)) {
-            setTimeout(() => { 
-                if(confirm("🛡️ Schedule Backup: It's been 3 days! Save your history to a file now?")) exportData(false); 
-            }, 2000);
-        }
-    }
-
     function exportData(manual) {
-        goalsData.lastBackup = Date.now(); 
-        saveGoals();
         const blob = new Blob([JSON.stringify(goalsData, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a'); 
+        const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `GoalHub_Backup_${new Date().toISOString().slice(0,10)}.json`; 
+        a.download = `GoalHub_Backup_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
-        if (manual) alert("Backup saved successfully!");
+        if (manual) alert("Backup saved!");
     }
 
     function importData(e) {
         const reader = new FileReader();
         reader.onload = (event) => {
-            try { 
-                goalsData = JSON.parse(event.target.result); 
-                saveGoals(); 
-                location.reload(); 
-            } catch(e) { alert("Invalid backup file."); }
+            try { goalsData = JSON.parse(event.target.result); saveGoals(); location.reload(); } catch(e) { alert("Invalid file"); }
         };
         reader.readAsText(e.target.files);
     }
