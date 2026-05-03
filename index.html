@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Goals Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📋 Daily Goals Hub</h1>
+            <p class="date" id="currentDate"></p>
+        </header>
+
+        <main class="main-content">
+            <!-- Daily Goals Section (Main) -->
+            <section class="daily-goals">
+                <div class="section-header">
+                    <h2>🎯 Today's Goals</h2>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="dailyProgress"></div>
+                        </div>
+                        <span class="progress-text" id="dailyProgressText">0%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="dailyInput" 
+                        class="goal-input"
+                        placeholder="Add a new daily goal..."
+                        autocomplete="off"
+                    >
+                    <button class="btn btn-primary" id="addDailyBtn">+ Add Goal</button>
+                </div>
+
+                <ul class="goals-list" id="dailyList"></ul>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="clearDailyCompletedBtn">Clear Completed</button>
+                    <button class="btn btn-secondary" id="clearDailyAllBtn">Clear All</button>
+                </div>
+            </section>
+
+            <!-- Sidebar with Monthly and Yearly Goals -->
+            <aside class="sidebar">
+                <!-- Monthly Goals -->
+                <section class="monthly-goals">
+                    <div class="section-header">
+                        <h3>📆 Monthly Goals</h3>
+                        <div class="mini-progress">
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" id="monthlyProgress"></div>
+                            </div>
+                            <span class="mini-progress-text" id="monthlyProgressText">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group compact">
+                        <input 
+                            type="text" 
+                            id="monthlyInput" 
+                            class="goal-input"
+                            placeholder="Add monthly goal..."
+                            autocomplete="off"
+                        >
+                        <button class="btn btn-primary compact" id="addMonthlyBtn">+</button>
+                    </div>
+
+                    <ul class="goals-list compact" id="monthlyList"></ul>
+
+                    <div class="action-buttons compact">
+                        <button class="btn btn-secondary compact" id="clearMonthlyCompletedBtn">Clear</button>
+                    </div>
+                </section>
+
+                <!-- Yearly Goals -->
+                <section class="yearly-goals">
+                    <div class="section-header">
+                        <h3>🎯 Yearly Goals</h3>
+                        <div class="mini-progress">
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" id="yearlyProgress"></div>
+                            </div>
+                            <span class="mini-progress-text" id="yearlyProgressText">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group compact">
+                        <input 
+                            type="text" 
+                            id="yearlyInput" 
+                            class="goal-input"
+                            placeholder="Add yearly goal..."
+                            autocomplete="off"
+                        >
+                        <button class="btn btn-primary compact" id="addYearlyBtn">+</button>
+                    </div>
+
+                    <ul class="goals-list compact" id="yearlyList"></ul>
+
+                    <div class="action-buttons compact">
+                        <button class="btn btn-secondary compact" id="clearYearlyCompletedBtn">Clear</button>
+                    </div>
+                </section>
+            </aside>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
