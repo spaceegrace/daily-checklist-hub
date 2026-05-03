@@ -9,29 +9,36 @@
 
 body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
 .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-.main-content { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
-/* Goal UI */
+/* --- Backup Banner --- */
+.backup-banner { background: var(--primary); color: white; text-align: center; padding: 8px 20px; font-size: 0.8rem; display: flex; justify-content: center; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 1100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.banner-actions { display: flex; align-items: center; gap: 10px; }
+.btn-banner { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem; transition: 0.2s; }
+.btn-banner:hover { background: white; color: var(--primary); }
+.btn-close-banner { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; opacity: 0.7; line-height: 1; }
+.btn-close-banner:hover { opacity: 1; }
+.hidden { display: none !important; }
+
+/* --- Goal UI --- */
+.main-content { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 section { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .input-group { display: flex; gap: 10px; margin: 15px 0; }
-.goal-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
-.btn { cursor: pointer; border: none; border-radius: 6px; padding: 10px; font-weight: bold; transition: 0.2s; }
-.btn:active { transform: scale(0.98); }
+.goal-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+.btn { cursor: pointer; border: none; border-radius: 6px; padding: 10px; font-weight: bold; }
 .btn-primary { background: var(--primary); color: white; }
-.goals-list { list-style: none; padding: 0; margin: 0; }
+.goals-list { list-style: none; padding: 0; }
 .goal-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; gap: 10px; }
-.goal-item:last-child { border-bottom: none; }
 .goal-item.completed span { text-decoration: line-through; color: #94a3b8; }
-.btn-delete { margin-left: auto; background: none; border: none; color: #cbd5e1; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+.btn-delete { margin-left: auto; background: none; border: none; color: #cbd5e1; font-size: 1.2rem; cursor: pointer; }
 .btn-delete:hover { color: #ef4444; }
 
-/* Progress Bars */
+/* --- Progress Bars --- */
 .progress-bar, .mini-progress-bar { width: 80px; height: 8px; background: #e2e8f0; border-radius: 5px; overflow: hidden; margin-right: 8px; }
-.progress-fill, .mini-progress-fill { height: 100%; background: var(--green); width: 0%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.progress-fill, .mini-progress-fill { height: 100%; background: var(--green); width: 0%; transition: 0.4s; }
 .progress-container, .mini-progress { display: flex; align-items: center; font-size: 0.8rem; font-weight: 600; color: #64748b; }
 
-/* History Footer Styles remain the same as previous turns... */
+/* --- History Footer --- */
 .history-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--dark-panel); color: white; border-top: 2px solid #3f3f5f; z-index: 1000; transition: 0.3s; }
 .history-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; cursor: pointer; }
 .history-title-group { display: flex; align-items: center; gap: 20px; }
