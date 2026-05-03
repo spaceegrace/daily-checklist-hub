@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="motivationBar" class="motivation-bar">
-        <span id="motivationText">🐸 💖 Ribbit! Loading your pond... ✨ 🐸</span>
+        <span id="motivationText">🐸 💖 Ribbit! Loading... ✨ 🐸</span>
     </div>
 
     <div class="container">
@@ -18,7 +18,6 @@
         </header>
 
         <main class="main-stack">
-            <!-- Mood Tracker -->
             <section class="pond-card">
                 <h2>How are you feeling? 🐸</h2>
                 <div class="mood-options">
@@ -30,11 +29,10 @@
                 </div>
             </section>
 
-            <!-- Water Tracker -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
-                    <span id="waterCountText" class="count-badge">0 / 8 glasses</span>
+                    <span id="waterCountText" class="count-badge">0 / 8</span>
                 </div>
                 <div class="water-grid">
                     <div class="droplet-row">
@@ -52,7 +50,6 @@
                 </div>
             </section>
 
-            <!-- Hops Tracker -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Daily Hops 🌿</h2>
@@ -63,7 +60,7 @@
                 </div>
                 <div class="input-row">
                     <input type="text" id="dailyInput" placeholder="Next hop..." autocomplete="off">
-                    <button id="addDailyBtn" class="btn-pond">Add Hop</button>
+                    <button id="addDailyBtn" class="btn-pond">Add</button>
                 </div>
                 <ul id="dailyList" class="hops-list"></ul>
             </section>
@@ -74,17 +71,24 @@
         <div class="bar-header">
             <div class="centered-controls">
                 <button id="historyToggle" class="btn-util">Achievements ▼</button>
-                <button id="resetPondBtn" class="btn-util">Reset Pond</button>
-                <button id="clearHistoryBtn" class="btn-util">Clear History</button>
+                <button id="resetPondBtn" class="btn-util">Reset</button>
+                <button id="clearHistoryBtn" class="btn-util">Clear</button>
             </div>
         </div>
         <div class="achievement-content">
+            <div class="achieve-col streak-section">
+                <h4>🔥 Daily Streak</h4>
+                <div class="streak-badge">
+                    <span id="streakCount">0</span>
+                    <small>Days</small>
+                </div>
+            </div>
             <div class="achieve-col">
                 <h4>Hops Log</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
             <div class="achieve-col">
-                <h4>Mood & Water Log</h4>
+                <h4>Mood & Water</h4>
                 <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
