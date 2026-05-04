@@ -1,9 +1,5 @@
 (function() {
-    var pondData = { 
-        daily: [], history: [], moodLog: [], sugarLog: [], carbLog: [], 
-        waterCount: 0, streak: 0, lastStreakDate: null 
-    };
-    
+    var pondData = { daily: [], history: [], moodLog: [], sugarLog: [], carbLog: [], waterCount: 0, streak: 0, lastStreakDate: null };
     var moodEmojis = { Happy: "😊", Calm: "😌", Focused: "🧐", Tired: "😴", Grumpy: "😠", Confused: "😕", Angry: "😡", Sad: "😢", Crying: "😭", Manic: "🤪" };
     var frogQuotes = [
         "🐸 💖 Ribbit! You're doing amazing! 💞 🐸", "✨ 🐸 Take a deep breath, little froggy! 💗 ✨",
@@ -20,7 +16,6 @@
         if (saved) { try { var parsed = JSON.parse(saved); for (var key in parsed) { pondData[key] = parsed[key]; } } catch(e) {} }
 
         document.getElementById('motivationText').textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)];
-        
         var now = new Date();
         document.getElementById('manualTimeInput').value = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
 
@@ -28,28 +23,26 @@
         setClick('addDailyBtn', addHop);
         setClick('addSugarBtn', addSugar);
         setClick('addCarbBtn', addCarb);
-        setClick('exportBtn', exportData);
+        setClick('exportBtn', function() { navigator.clipboard.writeText(JSON.stringify(pondData, null, 2)).then(() => alert("Copied! 📋")); });
         setClick('bannerClose', function() { document.getElementById('motivationBar').style.display = 'none'; });
         setClick('historyToggle', function() { document.getElementById('historyFooter').classList.toggle('collapsed'); });
-        setClick('resetPondBtn', function() { if (confirm("Reset today's hydration and active hops?")) { pondData.daily = []; pondData.waterCount = 0; saveAndRefresh(); } });
+        setClick('resetPondBtn', function() { if (confirm("Reset today?")) { pondData.daily = []; pondData.waterCount = 0; saveAndRefresh(); } });
         setClick('clearHistoryBtn', function() { if (confirm("Delete ALL data?")) { localStorage.removeItem('ProgressPond_V21'); location.reload(); } });
 
-        document.querySelectorAll('.mood-btn').forEach(function(btn) {
+        document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = function() {
-                var mood = this.getAttribute('data-mood');
-                pondData.moodLog.push({ val: mood, icon: moodEmojis[mood], fullDate: currentFullDate(document.getElementById('manualTimeInput').value) });
+                pondData.moodLog.push({ val: this.getAttribute('data-mood'), icon: moodEmojis[this.getAttribute('data-mood')], fullDate: currentFullDate(document.getElementById('manualTimeInput').value) });
                 saveAndRefresh();
             };
         });
 
-        document.querySelectorAll('.drop-btn').forEach(function(btn, index) {
+        document.querySelectorAll('.drop-btn').forEach((btn, index) => {
             btn.onclick = function() {
                 pondData.waterCount = index + 1;
                 pondData.moodLog.push({ val: "Drank Water", icon: "💧", fullDate: currentFullDate(document.getElementById('manualTimeInput').value) });
                 saveAndRefresh();
             };
         });
-
         renderAll();
     };
 
@@ -80,16 +73,16 @@
     }
 
     window.toggleHop = function(id) {
-        var idx = pondData.daily.findIndex(function(g) { return g.id === id; });
+        var idx = pondData.daily.findIndex(g => g.id === id);
         if (idx > -1) {
-            var item = pondData.daily.splice(idx, 1);
+            var item = pondData.daily.splice(idx, 1)[0];
             pondData.history.push({ text: "[" + item.priority + "] " + item.text, fullDate: currentFullDate(null) });
             saveAndRefresh();
         }
     };
 
     window.deleteHop = function(id) {
-        pondData.daily = pondData.daily.filter(function(g) { return g.id !== id; });
+        pondData.daily = pondData.daily.filter(g => g.id !== id);
         saveAndRefresh();
     };
 
@@ -99,51 +92,35 @@
         return now.toLocaleDateString([], { month: 'short', day: 'numeric' }) + " @ " + timeStr;
     }
 
-    function exportData() {
-        navigator.clipboard.writeText(JSON.stringify(pondData, null, 2)).then(function() { alert("Copied! 📋"); });
-    }
-
-    function saveAndRefresh() {
-        localStorage.setItem('ProgressPond_V21', JSON.stringify(pondData));
-        renderAll();
-    }
+    function saveAndRefresh() { localStorage.setItem('ProgressPond_V21', JSON.stringify(pondData)); renderAll(); }
 
     function renderAll() {
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        document.querySelectorAll('.drop-btn').forEach((btn, i) => i < pondData.waterCount ? btn.classList.add('active') : btn.classList.remove('active'));
         
-        // Water Stays Highlighted
-        document.querySelectorAll('.drop-btn').forEach((btn, i) => {
-            if (i < pondData.waterCount) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-        document.getElementById('waterCountText').textContent = pondData.waterCount + " / 8";
-
-        // Hops
         var listHtml = "";
         for (var i = 0; i < pondData.daily.length; i++) {
             var g = pondData.daily[i];
-            listHtml += '<li style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:white; padding:8px; border-radius:10px;">' +
-                '<input type="checkbox" onchange="toggleHop(' + g.id + ')">' +
-                '<span style="flex:1">' + g.text + ' <small>(' + g.priority + ')</small></span>' +
-                '<button onclick="deleteHop(' + g.id + ')" style="background:none; border:none; color:red; cursor:pointer;">×</button></li>';
+            listHtml += `<li style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:white; padding:8px; border-radius:10px;">
+                <input type="checkbox" onchange="toggleHop(${g.id})">
+                <span style="flex:1">${g.text} <small>(${g.priority})</small></span>
+                <button onclick="deleteHop(${g.id})" style="background:none; border:none; color:red; cursor:pointer;">×</button></li>`;
         }
         document.getElementById('dailyList').innerHTML = listHtml || "No active hops...";
 
-        // History
         var combined = pondData.moodLog.concat(
             pondData.sugarLog.map(s => ({ val: "Glucose: " + s.val, icon: "🩸", fullDate: s.fullDate, color: s.color })),
             pondData.carbLog.map(c => ({ val: "Carbs: " + c.val + "g", icon: "🥣", fullDate: c.fullDate }))
-        ).sort((a, b) => new Date(b.fullDate.split(' @ ')[0] + ' ' + b.fullDate.split(' @ ')[1]) - new Date(a.fullDate.split(' @ ')[0] + ' ' + a.fullDate.split(' @ ')[1]));
+        ).sort((a, b) => new Date(b.fullDate.split(' @ ')[0]) - new Date(a.fullDate.split(' @ ')[0]));
 
         document.getElementById('moodHistoryList').innerHTML = combined.slice(0, 15).reverse().map(m => 
-            '<div><span style="color:' + (m.color || 'white') + '">' + m.icon + ' ' + m.val + '</span> <small>' + m.fullDate + '</small></div>').join('');
+            `<div><span style="color:${m.color || 'white'}">${m.icon} ${m.val}</span> <small>${m.fullDate}</small></div>`).join('');
         
         document.getElementById('dailyHistoryList').innerHTML = pondData.history.slice().reverse().slice(0, 10).map(h => 
-            '<div>🌿 ' + h.text + ' <small>' + h.fullDate + '</small></div>').join('');
+            `<div>🌿 ${h.text} <small>${h.fullDate}</small></div>`).join('');
 
         var total = pondData.daily.length + pondData.history.length;
-        var percent = total ? Math.round((pondData.history.length / total) * 100) : 0;
-        document.getElementById('dailyProgress').style.width = percent + '%';
-        document.getElementById('dailyProgressText').textContent = percent + '%';
+        document.getElementById('dailyProgress').style.width = (total ? Math.round((pondData.history.length / total) * 100) : 0) + '%';
+        document.getElementById('dailyProgressText').textContent = (total ? Math.round((pondData.history.length / total) * 100) : 0) + '%';
     }
 })();
