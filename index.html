@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progress Pond V16 🐸</title>
+    <title>Progress Pond V17 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="motivationBar" class="motivation-bar">
-        <span id="motivationText">🐸 💖 Ribbit! You're doing amazing! ✨ 🐸</span>
+        <span id="motivationText"></span>
         <button id="bannerClose" class="btn-close-banner">×</button>
     </div>
 
@@ -19,7 +19,7 @@
         </header>
 
         <main class="main-stack">
-            <!-- Moods: 5 per row -->
+            <!-- Moods -->
             <section class="pond-card">
                 <h2>How are you feeling? 🐸</h2>
                 <div class="mood-options">
@@ -36,19 +36,22 @@
                 </div>
             </section>
 
-            <!-- Blood Sugar Section -->
+            <!-- Glucose & Carbs -->
             <section class="pond-card">
-                <div class="card-header">
-                    <h2>Blood Sugar 🩸</h2>
-                    <small style="opacity: 0.6;">Target: 70-180 mg/dL</small>
-                </div>
-                <div class="input-row">
-                    <input type="number" id="sugarInput" placeholder="mg/dL">
-                    <button id="addSugarBtn" class="btn-pond">Log</button>
+                <div class="card-header"><h2>Blood Sugar & Carbs 🩸</h2></div>
+                <div class="input-stack">
+                    <div class="input-row">
+                        <input type="number" id="sugarInput" placeholder="Glucose (mg/dL)">
+                        <button id="addSugarBtn" class="btn-pond">Log</button>
+                    </div>
+                    <div class="input-row">
+                        <input type="number" id="carbInput" placeholder="Carbs (grams)">
+                        <button id="addCarbBtn" class="btn-pond">Log</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- Hydration: 4 per row -->
+            <!-- Hydration -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
@@ -62,7 +65,7 @@
                 </div>
             </section>
 
-            <!-- Hops Section -->
+            <!-- Hops -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Daily Hops 🌿</h2>
@@ -90,19 +93,22 @@
     <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
-            <div class="centered-controls">
-                <button id="historyToggle" class="btn-util">Achievements ▼</button>
-                <button id="exportBtn" class="btn-util">Copy 📋</button>
-                <button id="resetPondBtn" class="btn-util">Reset</button>
-            </div>
+            <button id="historyToggle" class="btn-util" style="width: 100%;">Achievements ▼</button>
         </div>
         <div class="achievement-content">
+            <!-- Controls moved inside -->
+            <div class="centered-controls" style="margin-bottom: 15px; display: flex; justify-content: center; gap: 8px;">
+                <button id="exportBtn" class="btn-util">Copy 📋</button>
+                <button id="resetPondBtn" class="btn-util">Reset Today</button>
+                <button id="clearHistoryBtn" class="btn-util" style="background: #ff4d4d; border-color: #ff4d4d;">Clear All Data</button>
+            </div>
+            
             <div class="achieve-col">
                 <h4>Hops Log</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
             <div class="achieve-col">
-                <h4>Mood, Water & Sugar</h4>
+                <h4>Vitals & Mood</h4>
                 <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
