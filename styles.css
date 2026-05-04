@@ -1,176 +1,34 @@
-:root { 
-    --frog: #9ed5a0; 
-    --dark-frog: #67a36a; 
-    --pink: #ffc2d1; 
-    --bg: #ffe5ec; 
-    --soft: #fffcfd; 
-    --txt: #5d4a4a; 
-    --water-blue: #e0f2fe; 
-    --water-border: #7dd3fc; 
-} 
+:root { --frog: #9ed5a0; --dark-frog: #67a36a; --pink: #ffc2d1; --bg: #ffe5ec; --soft: #fffcfd; --txt: #5d4a4a; --water-blue: #e0f2fe; --water-border: #7dd3fc; }
 
-body { 
-    font-family: 'Segoe UI', Arial, sans-serif; 
-    background-color: var(--bg); 
-    color: var(--txt); 
-    margin: 0; 
-    padding-bottom: 120px; 
-    overflow-x: hidden; 
-} 
+body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--txt); margin: 0; padding-bottom: 80px; }
+.container { width: 95%; max-width: 450px; margin: 0 auto; padding: 20px 10px; }
 
-.container { 
-    width: 95%; 
-    max-width: 450px; 
-    margin: 0 auto; 
-    padding: 20px 10px; 
-    text-align: center; 
-} 
+/* Banner */
+.motivation-bar { background: var(--pink); color: white; padding: 10px; text-align: center; position: sticky; top: 0; z-index: 1000; font-weight: bold; font-size: 0.9rem; }
+.btn-close-banner { float: right; background: none; border: none; color: white; font-weight: bold; cursor: pointer; }
 
-/* --- 💖 Centered Banner --- */ 
-.motivation-bar { 
-    background: var(--pink); 
-    min-height: 45px; 
-    border-bottom: 3px dashed white; 
-    position: sticky; 
-    top: 0; 
-    z-index: 1100; 
-    display: grid; 
-    place-items: center; 
-    text-align: center; 
-    color: white; 
-    text-shadow: 1px 1px rgba(0,0,0,0.1); 
-    width: 100%; 
-    box-sizing: border-box; 
-    padding: 10px 45px; 
-} 
+/* Grid Layouts */
+.mood-options { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+.droplet-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
-.btn-close-banner { 
-    position: absolute; 
-    right: 10px; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    background: none; 
-    border: none; 
-    color: white; 
-    font-size: 1.4rem; 
-    font-weight: bold; 
-    cursor: pointer; 
-} 
+.mood-btn, .drop-btn { background: white; border: 2px solid var(--frog); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; }
 
-/* --- Pond Cards --- */ 
-.pond-card { 
-    background: var(--soft); 
-    border-radius: 20px; 
-    border: 3px solid var(--frog); 
-    padding: 15px; 
-    box-shadow: 6px 6px 0px var(--pink); 
-    text-align: left; 
-    margin-bottom: 20px; 
-} 
+/* Water Effect */
+.drop-btn { filter: grayscale(100%) opacity(0.3); transition: 0.3s; }
+.drop-btn.active { filter: grayscale(0%) opacity(1) !important; background: var(--water-blue) !important; border-color: var(--water-border) !important; transform: scale(1.1); }
 
-.card-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 15px; 
-} 
-
-/* --- Mood Grid --- */ 
-.mood-options { 
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    margin-top: 10px; 
-    gap: 8px; 
-} 
-
-.mood-btn { 
-    background: white; 
-    border: 2px solid var(--frog); 
-    border-radius: 50%; 
-    width: 44px; 
-    height: 44px; 
-    cursor: pointer; 
-    font-size: 1.2rem; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: 0.2s; 
-} 
-
-.mood-btn:hover {
-    transform: scale(1.1);
-    background: var(--pink);
-    border-color: white;
-}
-
-/* --- Water & Sugar Inputs --- */
+/* Inputs */
+.pond-card { background: var(--soft); border-radius: 20px; border: 3px solid var(--frog); padding: 15px; margin-bottom: 20px; box-shadow: 5px 5px 0 var(--pink); }
 .input-row { display: flex; gap: 8px; margin: 10px 0; }
-.input-stack { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
-
-input[type="text"], input[type="number"], .priority-select { 
-    flex: 1; 
-    padding: 12px; 
-    border: 2px solid var(--frog); 
-    border-radius: 12px; 
-    outline: none; 
-    font-size: 16px; 
-    background: white;
-} 
-
-.priority-select { flex: 0.4; font-size: 14px; cursor: pointer; }
-
-.btn-pond { 
-    background: var(--frog); 
-    color: white; 
-    border: none; 
-    border-radius: 12px; 
-    padding: 10px 15px; 
-    font-weight: bold; 
-    cursor: pointer; 
-} 
-
+input, select { padding: 10px; border: 2px solid var(--frog); border-radius: 10px; outline: none; }
+.btn-pond { background: var(--frog); color: white; border: none; border-radius: 10px; padding: 10px; font-weight: bold; cursor: pointer; }
 .full-width { width: 100%; }
 
-/* --- Progress --- */ 
-.progress-bar { width: 80px; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog); }
-.progress-fill { height: 100%; background: var(--frog); width: 0%; transition: 0.5s; }
-
-/* --- Achievement Bar --- */ 
-.achievement-bar { 
-    position: fixed; 
-    bottom: 0; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    width: 100%; 
-    max-width: 600px; 
-    background: var(--dark-frog); 
-    color: white; 
-    border-radius: 20px 20px 0 0; 
-    z-index: 1200; 
-    transition: 0.3s; 
-} 
-
-.bar-header { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; }
-.btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; cursor: pointer; margin: 0 4px; }
-
-.achievement-content { display: flex; flex-direction: column; gap: 15px; padding: 15px; max-height: 60vh; overflow-y: auto; }
-.achievement-bar.collapsed .achievement-content { display: none; }
-
-/* --- History List Styles --- */
-.history-list div { 
-    font-size: 0.8rem; 
-    padding: 6px 0; 
-    border-bottom: 1px solid rgba(255,255,255,0.1); 
-    display: flex;
-    flex-direction: column;
-} 
-
-.history-list small { color: rgba(255,255,255,0.6); font-size: 0.65rem; margin-top: 2px; }
-
-/* --- Priority Colors --- */
-.tag-high { color: #ff4d4d; font-weight: bold; }
-.tag-medium { color: #ffa500; font-weight: bold; }
-.tag-low { color: #9ed5a0; font-weight: bold; }
-
-.hidden { display: none !important; }
+/* Achievement Bar */
+.achievement-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark-frog); color: white; border-radius: 20px 20px 0 0; transition: 0.3s; }
+.achievement-bar.collapsed { transform: translateY(calc(100% - 50px)); }
+.bar-header { height: 50px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
+.btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; margin: 0 4px; cursor: pointer; }
+.achievement-content { display: flex; flex-direction: column; gap: 15px; padding: 15px; max-height: 50vh; overflow-y: auto; }
+.history-list div { font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 5px 0; }
+.history-list small { color: rgba(255,255,255,0.6); display: block; }
