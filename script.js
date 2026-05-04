@@ -18,13 +18,18 @@
     ];
 
     window.onload = function() {
-        var saved = localStorage.getItem('ProgressPond_V18');
+        var saved = localStorage.getItem('ProgressPond_V19');
         if (saved) { try { var parsed = JSON.parse(saved); for (var key in parsed) { pondData[key] = parsed[key]; } } catch(e) {} }
 
-        // Set Banner Quote
         document.getElementById('motivationText').textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)];
 
-        // Safe click helpers
+        // Set default time to current
+        var timeInput = document.getElementById('manualTimeInput');
+        if (timeInput) {
+            var now = new Date();
+            timeInput.value = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        }
+
         function setClick(id, fn) { var el = document.getElementById(id); if (el) el.onclick = fn; }
 
         setClick('addDailyBtn', addHop);
@@ -33,23 +38,21 @@
         setClick('exportBtn', exportData);
         setClick('bannerClose', function() { document.getElementById('motivationBar').style.display = 'none'; });
         setClick('historyToggle', function() { document.getElementById('historyFooter').classList.toggle('collapsed'); });
-        setClick('resetPondBtn', function() { if (confirm("Reset today's hydration and active hops?")) { pondData.daily = []; pondData.waterCount = 0; saveAndRefresh(); } });
-        setClick('clearHistoryBtn', function() { if (confirm("Permanently delete ALL history and logs?")) { localStorage.removeItem('ProgressPond_V18'); location.reload(); } });
+        setClick('resetPondBtn', function() { if (confirm("Reset today's water and active hops?")) { pondData.daily = []; pondData.waterCount = 0; saveAndRefresh(); } });
+        setClick('clearHistoryBtn', function() { if (confirm("Delete ALL data forever?")) { localStorage.removeItem('ProgressPond_V19'); location.reload(); } });
 
-        // Moods
         document.querySelectorAll('.mood-btn').forEach(function(btn) {
             btn.onclick = function() {
                 var mood = this.getAttribute('data-mood');
-                pondData.moodLog.push({ val: mood, icon: moodEmojis[mood], fullDate: currentFullDate(0) });
+                pondData.moodLog.push({ val: mood, icon: moodEmojis[mood], fullDate: getCurrentFormattedDate() });
                 saveAndRefresh();
             };
         });
 
-        // Water
         document.querySelectorAll('.drop-btn').forEach(function(btn, index) {
             btn.onclick = function() {
                 pondData.waterCount = index + 1;
-                pondData.moodLog.push({ val: "Drank Water", icon: "💧", fullDate: currentFullDate(0) });
+                pondData.moodLog.push({ val: "Drank Water", icon: "💧", fullDate: getCurrentFormattedDate() });
                 saveAndRefresh();
             };
         });
@@ -68,33 +71,46 @@
 
     function addSugar() {
         var input = document.getElementById('sugarInput');
-        var offset = parseInt(document.getElementById('timeOffset').value);
+        var timeVal = document.getElementById('manualTimeInput').value;
         var val = parseInt(input.value);
         if (!val) return;
         var color = "#67a36a"; 
         if (val < 70 || val > 250) color = "#ff4d4d"; 
         else if (val > 180) color = "#ffa500"; 
         else if (val < 80) color = "#7dd3fc"; 
-        pondData.sugarLog.push({ val: val, color: color, fullDate: currentFullDate(offset) });
+        pondData.sugarLog.push({ val: val, color: color, fullDate: formatWithManualTime(timeVal) });
         input.value = "";
         saveAndRefresh();
     }
 
     function addCarb() {
         var input = document.getElementById('carbInput');
-        var offset = parseInt(document.getElementById('timeOffset').value);
+        var timeVal = document.getElementById('manualTimeInput').value;
         var val = parseInt(input.value);
         if (!val) return;
-        pondData.carbLog.push({ val: val, fullDate: currentFullDate(offset) });
+        pondData.carbLog.push({ val: val, fullDate: formatWithManualTime(timeVal) });
         input.value = "";
         saveAndRefresh();
+    }
+
+    function getCurrentFormattedDate() {
+        var now = new Date();
+        var date = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        var time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+        return date + " @ " + time;
+    }
+
+    function formatWithManualTime(timeString) {
+        var now = new Date();
+        var dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        return dateStr + " @ " + timeString;
     }
 
     window.toggleHop = function(id) {
         var idx = pondData.daily.findIndex(function(g) { return g.id === id; });
         if (idx > -1) {
             var item = pondData.daily.splice(idx, 1)[0];
-            pondData.history.push({ text: "[" + item.priority + "] " + item.text, fullDate: currentFullDate(0) });
+            pondData.history.push({ text: "[" + item.priority + "] " + item.text, fullDate: getCurrentFormattedDate() });
             saveAndRefresh();
         }
     };
@@ -104,27 +120,16 @@
         saveAndRefresh();
     };
 
-    function currentFullDate(offsetMinutes) {
-        var now = new Date();
-        now.setMinutes(now.getMinutes() - offsetMinutes);
-        return now.toLocaleDateString([], { month: 'short', day: 'numeric' }) + " @ " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
     function exportData() {
-        var str = JSON.stringify(pondData, null, 2);
-        navigator.clipboard.writeText(str).then(function() { alert("Pond Data Copied! 🐸📋"); });
+        navigator.clipboard.writeText(JSON.stringify(pondData, null, 2)).then(function() { alert("Pond Data Copied! 📋"); });
     }
 
     function saveAndRefresh() {
-        localStorage.setItem('ProgressPond_V18', JSON.stringify(pondData));
+        localStorage.setItem('ProgressPond_V19', JSON.stringify(pondData));
         renderAll();
     }
 
     function renderAll() {
-        if (document.getElementById('currentDate')) {
-            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        }
-        
         var listHtml = "";
         for (var i = 0; i < pondData.daily.length; i++) {
             var g = pondData.daily[i];
@@ -133,7 +138,7 @@
                 '<span style="flex:1">' + g.text + ' <small>(' + g.priority + ')</small></span>' +
                 '<button onclick="deleteHop(' + g.id + ')" style="background:none; border:none; color:red; cursor:pointer;">×</button></li>';
         }
-        document.getElementById('dailyList').innerHTML = listHtml || "No hops yet...";
+        document.getElementById('dailyList').innerHTML = listHtml || "No active hops...";
 
         var drops = document.querySelectorAll('.drop-btn');
         for (var d = 0; d < drops.length; d++) {
