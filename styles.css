@@ -1,225 +1,36 @@
 :root { 
-    --frog: #9ed5a0; 
-    --dark-frog: #67a36a; 
-    --pink: #ffc2d1; 
-    --bg: #ffe5ec; 
-    --soft: #fffcfd; 
-    --txt: #5d4a4a; 
-    --water-blue: #e0f2fe; 
-    --water-border: #7dd3fc; 
+    --frog: #9ed5a0; --dark-frog: #67a36a; --pink: #ffc2d1; --bg: #ffe5ec; 
+    --soft: #fffcfd; --txt: #5d4a4a; --water-blue: #e0f2fe; --water-border: #7dd3fc; 
 } 
 
-body { 
-    font-family: 'Segoe UI', Arial, sans-serif; 
-    background-color: var(--bg); 
-    color: var(--txt); 
-    margin: 0; 
-    padding-bottom: 80px; 
-} 
-
-.container { 
-    width: 95%; 
-    max-width: 450px; 
-    margin: 0 auto; 
-    padding: 20px 10px; 
-} 
-
-.header { text-align: center; }
-.header h1 { color: var(--dark-frog); margin-bottom: 5px; text-shadow: 1px 1px white; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--txt); margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+.container { width: 95%; max-width: 450px; margin: 0 auto; padding: 20px 10px; }
 
 /* Banner */
 .motivation-bar { 
-    background: var(--pink); 
-    color: white; 
-    padding: 10px; 
-    text-align: center; 
-    position: sticky; 
-    top: 0; 
-    z-index: 1000; 
-    font-weight: bold; 
-    font-size: 0.9rem; 
-    border-bottom: 2px dashed white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    background: var(--pink); color: white; padding: 12px 45px; text-align: center; position: sticky; 
+    top: 0; z-index: 1100; font-weight: bold; font-size: 0.9rem; border-bottom: 3px dashed white; display: grid; place-items: center;
 } 
-
-.btn-close-banner { 
-    float: right; 
-    background: none; 
-    border: none; 
-    color: white; 
-    cursor: pointer; 
-    font-size: 1.2rem; 
-}
+.btn-close-banner { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; cursor: pointer; font-size: 1.4rem; }
 
 /* Cards */
-.pond-card { 
-    background: var(--soft); 
-    border-radius: 20px; 
-    border: 3px solid var(--frog); 
-    padding: 15px; 
-    margin-bottom: 20px; 
-    box-shadow: 5px 5px 0 var(--pink); 
-} 
-
-.card-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 10px; 
-} 
-
-.input-row { display: flex; gap: 8px; margin: 10px 0; }
-input, select, .time-picker { 
-    padding: 10px; 
-    border: 2px solid var(--frog); 
-    border-radius: 12px; 
-    outline: none; 
-    background: white; 
-    font-family: inherit;
-    color: var(--txt);
-}
+.pond-card { background: var(--soft); border-radius: 20px; border: 3px solid var(--frog); padding: 15px; margin-bottom: 20px; box-shadow: 6px 6px 0 var(--pink); text-align: left; }
+.header { text-align: center; }
+.header h1 { color: var(--dark-frog); margin: 10px 0; }
 
 /* Grids */
-.mood-options { 
-    display: grid; 
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 8px; 
-} 
+.mood-options { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+.droplet-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 10px; justify-items: center; }
 
-.droplet-container { 
-    display: grid; 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 10px; 
-    justify-items: center; 
-}
-
-/* Buttons */
 .mood-btn, .drop-btn { 
-    background: white; 
-    border: 2px solid var(--frog); 
-    border-radius: 50%; 
-    width: 45px; 
-    height: 45px; 
-    cursor: pointer; 
-    font-size: 1.3rem; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: white; border: 2px solid var(--frog); border-radius: 50%; 
+    width: 44px; height: 44px; cursor: pointer; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; 
 }
-
-/* Mood Button Behavior: Quick pop on click, but no sticky active state */
-.mood-btn:active {
-    transform: scale(0.9);
-    background: var(--pink);
-    border-color: white;
-}
-
-/* Water Droplets Behavior: Sticky active state */
-.drop-btn { 
-    filter: grayscale(100%) opacity(0.3); 
-} 
-
-.drop-btn.active { 
-    filter: grayscale(0%) opacity(1) !important; 
-    background: var(--water-blue) !important; 
-    border-color: var(--water-border) !important; 
-    transform: scale(1.1); 
-    box-shadow: 0 0 8px var(--water-border);
-}
-
-.btn-pond { 
-    background: var(--frog); 
-    color: white; 
-    border: none; 
-    border-radius: 12px; 
-    padding: 10px; 
-    font-weight: bold; 
-    cursor: pointer; 
-    transition: 0.2s;
-}
-
-.btn-pond:active { transform: scale(0.98); background: var(--dark-frog); }
-.full-width { width: 100%; }
-
-/* Progress */
-.progress-wrap { display: flex; align-items: center; gap: 10px; flex: 1; margin-left: 10px; }
-.progress-bar { 
-    flex: 1; 
-    height: 12px; 
-    background: white; 
-    border-radius: 10px; 
-    overflow: hidden; 
-    border: 2px solid var(--frog); 
-} 
-
-.progress-fill { 
-    height: 100%; 
-    background: var(--frog); 
-    width: 0%; 
-    transition: width 0.6s ease; 
-}
+.drop-btn { filter: grayscale(100%) opacity(0.3); }
+.drop-btn.active { filter: grayscale(0%) opacity(1) !important; background: var(--water-blue) !important; border-color: var(--water-border) !important; transform: scale(1.1); }
 
 /* Achievement Bar */
-.achievement-bar { 
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    right: 0; 
-    background: var(--dark-frog); 
-    color: white; 
-    border-radius: 20px 20px 0 0; 
-    transition: 0.3s ease-in-out; 
-    z-index: 2000; 
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-} 
-
-.achievement-bar.collapsed { 
-    transform: translateY(calc(100% - 50px)); 
-} 
-
-.bar-header { 
-    height: 50px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    border-bottom: 1px solid rgba(255,255,255,0.2); 
-    cursor: pointer;
-} 
-
-.btn-util { 
-    background: rgba(255,255,255,0.2); 
-    border: 1px solid white; 
-    color: white; 
-    padding: 5px 8px; 
-    border-radius: 8px; 
-    font-size: 0.7rem; 
-    cursor: pointer; 
-    margin: 0 2px; 
-    font-weight: bold;
-}
-
-.btn-util:hover { background: rgba(255,255,255,0.3); }
-
-.achievement-content { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
-    padding: 15px; 
-    max-height: 50vh; 
-    overflow-y: auto; 
-} 
-
-.history-list div { 
-    font-size: 0.85rem; 
-    border-bottom: 1px solid rgba(255,255,255,0.1); 
-    padding: 8px 0; 
-    line-height: 1.4;
-} 
-
-.history-list small { 
-    opacity: 0.7; 
-    display: block; 
-    font-size: 0.7rem;
-    margin-top: 2px;
-}
+.achievement-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--dark-frog); color: white; border-radius: 20px 20px 0 0; z-index: 1200; transition: 0.3s; }
+.achievement-bar.collapsed { transform: translate(-50%, calc(100% - 50px)); }
+.bar-header { height: 50px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
+.btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 5px 8px; border-radius: 10px; font-size: 0.7rem; cursor: pointer; margin: 0 2px; font-weight: bold; }
