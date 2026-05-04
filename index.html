@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progress Pond V19 🐸</title>
+    <title>Progress Pond V21 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -36,14 +36,11 @@
                 </div>
             </section>
 
-            <!-- Glucose & Carbs with Time Picker -->
+            <!-- Stats Tracker -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Stats Tracker 🩸🥣</h2>
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <small style="font-size: 0.7rem;">Time:</small>
-                        <input type="time" id="manualTimeInput" class="time-picker">
-                    </div>
+                    <input type="time" id="manualTimeInput" class="time-picker">
                 </div>
                 <div class="input-row">
                     <input type="number" id="sugarInput" placeholder="mg/dL">
@@ -94,6 +91,7 @@
         </main>
     </div>
 
+    <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
