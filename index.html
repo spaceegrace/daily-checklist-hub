@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progress Pond V21 🐸</title>
+    <title>Progress Pond V22 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -56,7 +56,11 @@
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
-                    <span id="waterCountText" class="count-badge">0 / 8</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="waterCountText" class="count-badge">0 / 8</span>
+                        <!-- New: Clear Water Button -->
+                        <button id="clearWaterBtn" class="btn-util" style="background: var(--pink); border: 1px solid white; color: white;">Clear</button>
+                    </div>
                 </div>
                 <div class="droplet-container">
                     <button class="drop-btn">💧</button><button class="drop-btn">💧</button>
