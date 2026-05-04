@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progress Pond V15 🐸</title>
+    <title>Progress Pond V16 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Centered Motivation Banner -->
     <div id="motivationBar" class="motivation-bar">
         <span id="motivationText">🐸 💖 Ribbit! You're doing amazing! ✨ 🐸</span>
-        <button id="bannerClose" class="btn-close-banner" aria-label="Dismiss">×</button>
+        <button id="bannerClose" class="btn-close-banner">×</button>
     </div>
 
     <div class="container">
@@ -20,7 +19,7 @@
         </header>
 
         <main class="main-stack">
-            <!-- Mood Tracker -->
+            <!-- Moods: 5 per row -->
             <section class="pond-card">
                 <h2>How are you feeling? 🐸</h2>
                 <div class="mood-options">
@@ -37,10 +36,10 @@
                 </div>
             </section>
 
-            <!-- Blood Sugar Tracker -->
+            <!-- Blood Sugar Section -->
             <section class="pond-card">
                 <div class="card-header">
-                    <h2>Blood Sugar (CGM) 🩸</h2>
+                    <h2>Blood Sugar 🩸</h2>
                     <small style="opacity: 0.6;">Target: 70-180 mg/dL</small>
                 </div>
                 <div class="input-row">
@@ -49,29 +48,21 @@
                 </div>
             </section>
 
-            <!-- Hydration -->
+            <!-- Hydration: 4 per row -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
                     <span id="waterCountText" class="count-badge">0 / 8</span>
                 </div>
-                <div class="water-grid">
-                    <div class="droplet-row">
-                        <button class="drop-btn">💧</button>
-                        <button class="drop-btn">💧</button>
-                        <button class="drop-btn">💧</button>
-                        <button class="drop-btn">💧</button>
-                    </div>
-                    <div class="droplet-row">
-                        <button class="drop-btn">💧</button>
-                        <button class="drop-btn">💧</button>
-                        <button class="drop-btn">💧</button>
-                        <button class="drop-btn">💧</button>
-                    </div>
+                <div class="droplet-container">
+                    <button class="drop-btn">💧</button><button class="drop-btn">💧</button>
+                    <button class="drop-btn">💧</button><button class="drop-btn">💧</button>
+                    <button class="drop-btn">💧</button><button class="drop-btn">💧</button>
+                    <button class="drop-btn">💧</button><button class="drop-btn">💧</button>
                 </div>
             </section>
 
-            <!-- Daily Hops with Priority -->
+            <!-- Hops Section -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Daily Hops 🌿</h2>
@@ -82,7 +73,7 @@
                 </div>
                 <div class="input-stack">
                     <div class="input-row">
-                        <input type="text" id="dailyInput" placeholder="Next hop..." autocomplete="off">
+                        <input type="text" id="dailyInput" placeholder="Next hop...">
                         <select id="priorityInput" class="priority-select">
                             <option value="Low">Low 🌱</option>
                             <option value="Medium" selected>Med 🌿</option>
@@ -96,24 +87,16 @@
         </main>
     </div>
 
-    <!-- Collapsible Achievement Bar -->
+    <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
                 <button id="historyToggle" class="btn-util">Achievements ▼</button>
-                <button id="exportBtn" class="btn-util">Export 📋</button>
+                <button id="exportBtn" class="btn-util">Copy 📋</button>
                 <button id="resetPondBtn" class="btn-util">Reset</button>
-                <button id="clearHistoryBtn" class="btn-util">Clear</button>
             </div>
         </div>
         <div class="achievement-content">
-            <div class="achieve-col streak-section">
-                <h4>🔥 Daily Streak</h4>
-                <div class="streak-badge">
-                    <span id="streakCount">0</span>
-                    <small>Days</small>
-                </div>
-            </div>
             <div class="achieve-col">
                 <h4>Hops Log</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
