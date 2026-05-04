@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progress Pond V17 🐸</title>
+    <title>Progress Pond V18 🐸</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,8 +13,8 @@
     </div>
 
     <div class="container">
-        <header class="header">
-            <h1>✨ Progress Pond ✨</h1>
+        <header class="header" style="text-align: center;">
+            <h1 style="width: 100%;">✨ Progress Pond ✨</h1>
             <p id="currentDate" class="date-display"></p>
         </header>
 
@@ -36,18 +36,24 @@
                 </div>
             </section>
 
-            <!-- Glucose & Carbs -->
+            <!-- Glucose & Carbs (With Time Adjustment) -->
             <section class="pond-card">
-                <div class="card-header"><h2>Blood Sugar & Carbs 🩸</h2></div>
-                <div class="input-stack">
-                    <div class="input-row">
-                        <input type="number" id="sugarInput" placeholder="Glucose (mg/dL)">
-                        <button id="addSugarBtn" class="btn-pond">Log</button>
-                    </div>
-                    <div class="input-row">
-                        <input type="number" id="carbInput" placeholder="Carbs (grams)">
-                        <button id="addCarbBtn" class="btn-pond">Log</button>
-                    </div>
+                <div class="card-header">
+                    <h2>Stats Tracker 🩸🥣</h2>
+                    <select id="timeOffset" style="font-size: 0.7rem; padding: 2px;">
+                        <option value="0">Just now</option>
+                        <option value="15">15m ago</option>
+                        <option value="30">30m ago</option>
+                        <option value="60">1h ago</option>
+                    </select>
+                </div>
+                <div class="input-row">
+                    <input type="number" id="sugarInput" placeholder="mg/dL">
+                    <button id="addSugarBtn" class="btn-pond">Log Glucose</button>
+                </div>
+                <div class="input-row">
+                    <input type="number" id="carbInput" placeholder="Grams carbs">
+                    <button id="addCarbBtn" class="btn-pond">Log Carbs</button>
                 </div>
             </section>
 
@@ -65,7 +71,7 @@
                 </div>
             </section>
 
-            <!-- Hops -->
+            <!-- Daily Hops -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Daily Hops 🌿</h2>
@@ -93,22 +99,20 @@
     <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
-            <button id="historyToggle" class="btn-util" style="width: 100%;">Achievements ▼</button>
+            <div class="centered-controls">
+                <button id="historyToggle" class="btn-util">Achievements ▼</button>
+                <button id="exportBtn" class="btn-util">Copy 📋</button>
+                <button id="clearHistoryBtn" class="btn-util">Clear All</button>
+                <button id="resetPondBtn" class="btn-util">Reset Day</button>
+            </div>
         </div>
         <div class="achievement-content">
-            <!-- Controls moved inside -->
-            <div class="centered-controls" style="margin-bottom: 15px; display: flex; justify-content: center; gap: 8px;">
-                <button id="exportBtn" class="btn-util">Copy 📋</button>
-                <button id="resetPondBtn" class="btn-util">Reset Today</button>
-                <button id="clearHistoryBtn" class="btn-util" style="background: #ff4d4d; border-color: #ff4d4d;">Clear All Data</button>
-            </div>
-            
             <div class="achieve-col">
-                <h4>Hops Log</h4>
+                <h4>Hops History</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
             <div class="achieve-col">
-                <h4>Vitals & Mood</h4>
+                <h4>Health & Mood Log</h4>
                 <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
