@@ -1,86 +1,259 @@
-:root {
-    --frog: #9ed5a0;
-    --dark-frog: #67a36a;
-    --pink: #ffc2d1;
-    --bg: #ffe5ec;
-    --soft: #fffcfd;
-    --txt: #5d4a4a;
-    --water-blue: #e0f2fe;
-    --water-border: #7dd3fc;
-}
+:root { 
+    --frog: #9ed5a0; 
+    --dark-frog: #67a36a; 
+    --pink: #ffc2d1; 
+    --bg: #ffe5ec; 
+    --soft: #fffcfd; 
+    --txt: #5d4a4a; 
+    --water-blue: #e0f2fe; 
+    --water-border: #7dd3fc; 
+} 
 
-body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--txt); margin: 0; padding-bottom: 120px; overflow-x: hidden; }
+body { 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    background-color: var(--bg); 
+    color: var(--txt); 
+    margin: 0; 
+    padding-bottom: 120px; 
+    overflow-x: hidden; 
+} 
 
-.container { width: 95%; max-width: 450px; margin: 0 auto; padding: 20px 10px; text-align: center; }
+.container { 
+    width: 95%; 
+    max-width: 450px; 
+    margin: 0 auto; 
+    padding: 20px 10px; 
+    text-align: center; 
+} 
 
-/* --- 💖 BULLETPROOF Centered Banner --- */
+/* --- 💖 BULLETPROOF Centered Banner --- */ 
 .motivation-bar { 
     background: var(--pink); 
-    min-height: 45px;
+    min-height: 45px; 
     border-bottom: 3px dashed white; 
-    position: sticky; top: 0; z-index: 1100;
-    
-    /* Strong Centering Layer */
-    display: grid;
+    position: sticky; 
+    top: 0; 
+    z-index: 1100; 
+    display: grid; 
     place-items: center; 
-    text-align: center;
-    
+    text-align: center; 
     color: white; 
-    text-shadow: 1px 1px rgba(0,0,0,0.1);
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 45px; /* Padding on sides prevents text hitting the X */
+    text-shadow: 1px 1px rgba(0,0,0,0.1); 
+    width: 100%; 
+    box-sizing: border-box; 
+    padding: 10px 45px; 
+} 
+
+.motivation-bar span { 
+    font-weight: bold; 
+    font-size: 0.9rem; 
+    line-height: 1.2; 
+} 
+
+.btn-close-banner { 
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: none; 
+    border: none; 
+    color: white; 
+    font-size: 1.4rem; 
+    font-weight: bold; 
+    cursor: pointer; 
+    line-height: 1; 
+} 
+
+/* --- Pond Cards --- */ 
+.pond-card { 
+    background: var(--soft); 
+    border-radius: 20px; 
+    border: 3px solid var(--frog); 
+    padding: 15px; 
+    box-shadow: 6px 6px 0px var(--pink); 
+    text-align: left; 
+    margin-bottom: 20px; 
+} 
+
+.card-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 15px; 
+} 
+
+/* --- Mood Grid - UPDATED FOR WRAPPING --- */ 
+.mood-options { 
+    display: flex; 
+    flex-wrap: wrap; /* Allows 9 moods to wrap into rows */
+    justify-content: center; 
+    margin-top: 10px; 
+    gap: 10px; 
+} 
+
+.mood-btn, .drop-btn { 
+    background: white; 
+    border: 2px solid var(--frog); 
+    border-radius: 50%; 
+    width: 46px; 
+    height: 46px; 
+    cursor: pointer; 
+    font-size: 1.3rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: 0.2s; 
+} 
+
+.mood-btn:hover {
+    transform: scale(1.1);
+    background: var(--pink);
+    border-color: white;
 }
 
-.motivation-bar span {
-    font-weight: bold;
-    font-size: 0.9rem;
-    line-height: 1.2;
+/* --- Hydration Grid --- */
+.droplet-row { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-top: 10px; 
+    gap: 5px; 
+} 
+
+.drop-btn { 
+    filter: grayscale(100%) opacity(0.4); 
+} 
+
+.drop-btn.active { 
+    filter: grayscale(0%) opacity(1) !important; 
+    background: var(--water-blue) !important; 
+    border-color: var(--water-border) !important; 
+    transform: scale(1.1); 
+} 
+
+/* --- Goal Input --- */ 
+.input-row { 
+    display: flex; 
+    gap: 8px; 
+    margin: 15px 0; 
+} 
+
+input[type="text"] { 
+    flex: 1; 
+    padding: 12px; 
+    border: 2px solid var(--frog); 
+    border-radius: 12px; 
+    outline: none; 
+    font-size: 16px; 
+} 
+
+.btn-pond { 
+    background: var(--frog); 
+    color: white; 
+    border: none; 
+    border-radius: 12px; 
+    padding: 0 15px; 
+    font-weight: bold; 
+    cursor: pointer; 
+} 
+
+/* --- Progress --- */ 
+.progress-bar { 
+    width: 80px; 
+    height: 10px; 
+    background: #e0f2e1; 
+    border-radius: 10px; 
+    overflow: hidden; 
+    border: 1px solid var(--frog); 
+} 
+
+.progress-fill { 
+    height: 100%; 
+    background: var(--frog); 
+    width: 0%; 
+    transition: 0.5s; 
+} 
+
+/* --- Achievement Bar --- */ 
+.achievement-bar { 
+    position: fixed; 
+    bottom: 0; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    width: 100%; 
+    max-width: 600px; 
+    background: var(--dark-frog); 
+    color: white; 
+    border-radius: 20px 20px 0 0; 
+    z-index: 1200; 
+    transition: 0.3s; 
+} 
+
+.bar-header { 
+    padding: 10px; 
+    border-bottom: 1px solid rgba(255,255,255,0.2); 
+    text-align: center; 
+} 
+
+.btn-util { 
+    background: rgba(255,255,255,0.2); 
+    border: 1px solid white; 
+    color: white; 
+    padding: 6px 12px; 
+    border-radius: 10px; 
+    font-size: 0.7rem; 
+    font-weight: bold; 
+    cursor: pointer; 
+    margin: 0 4px; 
+} 
+
+.achievement-content { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+    padding: 15px; 
+    max-height: 60vh; 
+    overflow-y: auto; 
+} 
+
+.achievement-bar.collapsed .achievement-content { 
+    display: none; 
+} 
+
+/* --- Streak & History --- */ 
+.streak-section { 
+    text-align: center; 
+    background: rgba(0,0,0,0.1); 
+    border-radius: 15px; 
+    padding: 10px; 
+} 
+
+#streakCount { 
+    font-size: 2rem; 
+    font-weight: bold; 
+    color: var(--pink); 
+} 
+
+/* HISTORY LOGS WITH TIMESTAMPS */
+.history-list div { 
+    font-size: 0.8rem; 
+    padding: 6px 0; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    display: flex;
+    flex-direction: column; /* Stack name and date */
+} 
+
+.history-list small {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.65rem;
+    margin-top: 2px;
 }
 
-.btn-close-banner {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.4rem;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1;
-}
+.date-display { 
+    font-size: 0.9rem; 
+    font-weight: bold; 
+    color: var(--dark-frog); 
+    margin-top: -10px; 
+    margin-bottom: 20px; 
+} 
 
-/* --- Pond Cards --- */
-.pond-card { background: var(--soft); border-radius: 20px; border: 3px solid var(--frog); padding: 15px; box-shadow: 6px 6px 0px var(--pink); text-align: left; margin-bottom: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-
-/* --- Grids --- */
-.mood-options, .droplet-row { display: flex; justify-content: space-between; margin-top: 10px; gap: 5px; }
-.mood-btn, .drop-btn { background: white; border: 2px solid var(--frog); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.drop-btn { filter: grayscale(100%) opacity(0.4); }
-.drop-btn.active { filter: grayscale(0%) opacity(1) !important; background: var(--water-blue) !important; border-color: var(--water-border) !important; transform: scale(1.1); }
-
-/* --- Goal Input --- */
-.input-row { display: flex; gap: 8px; margin: 15px 0; }
-input[type="text"] { flex: 1; padding: 12px; border: 2px solid var(--frog); border-radius: 12px; outline: none; font-size: 16px; }
-.btn-pond { background: var(--frog); color: white; border: none; border-radius: 12px; padding: 0 15px; font-weight: bold; cursor: pointer; }
-
-/* --- Progress --- */
-.progress-bar { width: 80px; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog); }
-.progress-fill { height: 100%; background: var(--frog); width: 0%; transition: 0.5s; }
-
-/* --- Achievement Bar --- */
-.achievement-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--dark-frog); color: white; border-radius: 20px 20px 0 0; z-index: 1200; transition: 0.3s; }
-.bar-header { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; }
-.btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; cursor: pointer; margin: 0 4px; }
-.achievement-content { display: flex; flex-direction: column; gap: 15px; padding: 15px; max-height: 60vh; overflow-y: auto; }
-.achievement-bar.collapsed .achievement-content { display: none; }
-
-/* --- Streak & Misc --- */
-.streak-section { text-align: center; background: rgba(0,0,0,0.1); border-radius: 15px; padding: 10px; }
-#streakCount { font-size: 2rem; font-weight: bold; color: var(--pink); }
-.history-list div { font-size: 0.75rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.date-display { font-size: 0.9rem; font-weight: bold; color: var(--dark-frog); margin-top: -10px; margin-bottom: 20px; }
 .hidden { display: none !important; }
