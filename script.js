@@ -72,15 +72,32 @@
         });
 
         document.querySelectorAll('.drop-btn').forEach((btn, index) => {
-            btn.onclick = function() {
-                pondData.waterCount = index + 1;
-                pondData.moodLog.push({ 
-                    id: Date.now(), type: 'water', val: "Drank Water", icon: "💧", 
-                    fullDate: currentFullDate(null) 
-                });
-                saveAndRefresh();
-            };
-        });
+          btn.onclick = function() {
+            // 1. Check if we are activating or deactivating
+            const isDeactivating = btn.classList.contains('active');
+
+            if (isDeactivating) {
+              // If deactivating, lower the count and remove the class
+              btn.classList.remove('active');
+              pondData.waterCount = Math.max(0, pondData.waterCount - 1);
+            } else {
+              // If activating, increase the count, add class, and log the data
+              btn.classList.add('active');
+              pondData.waterCount = index + 1;
+      
+              pondData.moodLog.push({
+                id: Date.now(),
+                type: 'water',
+                val: "Drank Water",
+                icon: "💧",
+                fullDate: currentFullDate(null)
+              });
+            }
+
+    // 2. Save and update the UI
+    saveAndRefresh();
+  };
+});
 
         renderAll();
     };
