@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- 1. Added Chart.js Library -->
+    
+    <!-- Libraries for Charting & Excel Export -->
     <script src="https://jsdelivr.net"></script>
+    <script src="https://cloudflare.com"></script>
+    <script src="https://cloudflare.com"></script>
 </head>
 <body>
     <!-- Motivation Banner -->
@@ -39,7 +42,7 @@
                 </div>
             </section>
 
-            <!-- Stats Tracker (Glucose & Carbs) -->
+            <!-- Stats Tracker -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Stats Tracker 🩸🥣</h2>
@@ -55,12 +58,14 @@
                 </div>
             </section>
 
-            <!-- 2. Added Visualization Card -->
+            <!-- Visualization Card -->
             <section class="pond-card">
                 <h2>Pond Trends 📊</h2>
                 <div class="chart-container">
                     <canvas id="pondChart"></canvas>
                 </div>
+                <!-- Added Download Graph Button -->
+                <button id="downloadChartBtn" class="btn-pond full-width" style="margin-top: 10px;">Download Graph 🖼️</button>
             </section>
 
             <!-- Hydration -->
@@ -105,26 +110,32 @@
         </main>
     </div>
 
-    <!-- Achievement Bar (History Logs) -->
+    <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
                 <button id="historyToggle" class="btn-util">Achievements ▼</button>
                 <button id="exportBtn" class="btn-util">Copy 📋</button>
-                <!-- 3. Added CSV Export Button -->
                 <button id="csvExportBtn" class="btn-util">Excel 📊</button>
                 <button id="clearHistoryBtn" class="btn-util">Clear All</button>
                 <button id="resetPondBtn" class="btn-util">Reset Day</button>
             </div>
         </div>
         <div class="achievement-content">
+            <!-- Left Column: History -->
             <div class="achieve-col">
                 <h4>Hops History</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
+            <!-- Right Column: Stats & Streak -->
             <div class="achieve-col">
-                <h4>Health & Mood Log</h4>
-                <div id="moodHistoryList" class="history-list"></div>
+                <h4>Pond Stats</h4>
+                <div class="streak-card">
+                    <span class="streak-emoji">🔥</span>
+                    <strong class="streak-number" id="streakDisplay">0</strong>
+                    <small>Day Streak</small>
+                </div>
+                <div id="moodHistoryList" class="history-list" style="margin-top: 15px;"></div>
             </div>
         </div>
     </footer>
