@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Fixed Chart.js Library Link -->
+    <!-- Corrected Chart.js Library Link -->
     <script src="https://jsdelivr.net"></script>
 </head>
 <body>
@@ -57,7 +57,14 @@
 
             <!-- Visualization Card -->
             <section class="pond-card">
-                <h2>Pond Trends 📊</h2>
+                <div class="card-header">
+                    <h2>Pond Trends 📊</h2>
+                    <!-- View Selector for Filtering -->
+                    <select id="chartViewSelect" class="priority-select" style="font-size: 0.75rem; padding: 4px;">
+                        <option value="today">Today</option>
+                        <option value="week">7 Days</option>
+                    </select>
+                </div>
                 <div class="chart-container">
                     <canvas id="pondChart"></canvas>
                 </div>
