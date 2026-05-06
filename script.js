@@ -1,7 +1,7 @@
 (function() { 
     var pondData = { daily: [], history: [], moodLog: [], sugarLog: [], carbLog: [], waterCount: 0, streak: 0, lastStreakDate: null }; 
     var moodEmojis = { Happy: "😊", Calm: "😌", Focused: "🧐", Tired: "😴", Grumpy: "😠", Confused: "😕", Angry: "😡", Sad: "😢", Crying: "😭", Manic: "🤪" }; 
-    var frogQuotes = [ "🐸 💖 Ribbit! You're doing amazing! 💞 🐸", "✨ 🐸 Take a deep breath, little froggy! 💗 ✨", "🌸 🐸 Every hop counts! I'm proud of you! 💖 🌸", "💕 🐸 Stay hydrated and stay happy! 🐸 💕", "🐸 💗 You are the best frog in the pond! ✨ 🐸", "🐸 ✨ Leap into happiness! ✨ 🐸", "🐸 ☀️ Don't worry, be hoppy! ☀️ 🐸", "🐸 💖 Feeling totally un-frog-gettable today! 💖 🐸", "🌿 🐸 Just a little frog in a big, beautiful pond. 🐸 🌿", "☀️ 💧 Enjoying the simple things! 🐸 💧 ☀️", "🐸 😎 Toads-ally awesome! 😎 🐸", "🐸 🌈 Keep calm and leap on! 🌈 🐸", "🌊 🐸 Every day is a good day to make a splash! 🐸 🌊" ]; 
+    var frogQuotes = [ "🐸 💖 Ribbit! You're doing amazing! 💞 🐸", "✨ 🐸 Take a deep breath, little froggy! 💗 ✨", "🌸 🐸 Every hop counts! I'm proud of you! 💖 🌸", "💕 🐸 Stay hydrated and stay happy! 🐸 💕", "🐸 💗 You are the best frog in the pond! ✨ 🐸", "🐸 ✨ Leap into happiness! ✨ 🐸", "🐸 ☀️ Don't worry, be hoppy! ☀️ 🐸", "🐸 💖 Feeling totally un-frog-gettable today! 💖 🐸", "🌿 🐸 Just a little frog in a big, beautiful pond. 🐸 🌿", "☀️ 💧 Enjoying the simple things! 🐸 💧 ☀️", "🐸 😎 Toad-ally awesome! 😎 🐸", "🐸 🌈 Keep calm and leap on! 🌈 🐸", "🌊 🐸 Every day is a good day to make a splash! 🐸 🌊" ]; 
 
     window.onload = function() { 
         var saved = localStorage.getItem('ProgressPond_V23'); 
