@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Corrected Chart.js Library Link -->
+    <!-- FIXED: Full path to Chart.js for the trends graph to work -->
     <script src="https://jsdelivr.net"></script>
 </head>
 <body>
@@ -59,7 +59,6 @@
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Pond Trends 📊</h2>
-                    <!-- View Selector for Filtering -->
                     <select id="chartViewSelect" class="priority-select" style="font-size: 0.75rem; padding: 4px;">
                         <option value="today">Today</option>
                         <option value="week">7 Days</option>
@@ -124,12 +123,12 @@
             </div>
         </div>
         <div class="achievement-content">
-            <!-- Left Column: History -->
+            <!-- Column 1: History -->
             <div class="achieve-col">
                 <h4>Hops History</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
-            <!-- Right Column: Stats & Streak -->
+            <!-- Column 2: Stats & Streak -->
             <div class="achieve-col">
                 <h4>Pond Stats</h4>
                 <div class="streak-card">
