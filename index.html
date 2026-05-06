@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Corrected Chart.js Library Link -->
-    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
+    <!-- Motivation Banner -->
     <div id="motivationBar" class="motivation-bar">
         <span id="motivationText"></span>
-        <button id="bannerClose" class="btn-close-banner">×</button>
+        <button id="bannerClose" class="btn-close-banner" aria-label="Dismiss">×</button>
     </div>
 
     <div class="container">
@@ -54,28 +53,13 @@
                 </div>
             </section>
 
-            <!-- Visualization Card -->
-            <section class="pond-card">
-                <div class="card-header">
-                    <h2>Pond Trends 📊</h2>
-                    <select id="chartViewSelect" class="priority-select" style="font-size: 0.75rem; padding: 4px;">
-                        <option value="today">Today</option>
-                        <option value="week">7 Days</option>
-                    </select>
-                </div>
-                <div class="chart-container">
-                    <canvas id="pondChart"></canvas>
-                </div>
-                <button id="downloadChartBtn" class="btn-pond full-width" style="margin-top: 10px;">Download Graph 🖼️</button>
-            </section>
-
             <!-- Hydration -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Hydration 💧</h2>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span id="waterCountText" class="count-badge">0 / 8</span>
-                        <button id="clearWaterBtn" class="btn-util">Clear</button>
+                        <button id="clearWaterBtn" class="btn-util" style="background: var(--pink); border: 1px solid white; color: white;">Clear</button>
                     </div>
                 </div>
                 <div class="droplet-container">
@@ -111,6 +95,7 @@
         </main>
     </div>
 
+    <!-- Achievement Bar (Footer) -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
@@ -126,12 +111,7 @@
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
             <div class="achieve-col">
-                <h4>Pond Stats</h4>
-                <div class="streak-card">
-                    <span class="streak-emoji">🔥</span>
-                    <strong class="streak-number" id="streakDisplay">0</strong>
-                    <small>Day Streak</small>
-                </div>
+                <h4>Health & Mood Log</h4>
                 <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
