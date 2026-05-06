@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Load Chart.js for the Trends Graph -->
+    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
     <!-- Motivation Banner -->
@@ -37,7 +39,7 @@
                 </div>
             </section>
 
-            <!-- Stats Tracker -->
+            <!-- Stats Tracker (Glucose & Carbs) -->
             <section class="pond-card">
                 <div class="card-header">
                     <h2>Stats Tracker 🩸🥣</h2>
@@ -50,6 +52,14 @@
                 <div class="input-row">
                     <input type="number" id="carbInput" placeholder="Grams carbs">
                     <button id="addCarbBtn" class="btn-pond">Log Carbs</button>
+                </div>
+            </section>
+
+            <!-- NEW: Pond Trends Visualization -->
+            <section class="pond-card">
+                <h2>Pond Trends 📊</h2>
+                <div style="height: 250px; width: 100%; position: relative; background: white; border-radius: 10px; padding: 5px;">
+                    <canvas id="pondChart"></canvas>
                 </div>
             </section>
 
@@ -95,7 +105,7 @@
         </main>
     </div>
 
-    <!-- Achievement Bar (Footer) -->
+    <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
