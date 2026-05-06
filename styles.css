@@ -68,15 +68,20 @@ body {
 .header h1 { color: var(--dark-frog); margin: 10px 0; } 
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; } 
 
-/* Chart/Visualization */
+/* Chart/Visualization - Fixed for responsiveness */
 .chart-container { 
     background: white; 
     border-radius: 12px; 
     padding: 10px; 
     border: 1px solid var(--frog); 
-    margin-top: 10px; 
+    margin-top: 10px;
+    height: 250px; /* Gives the graph a stable height */
+    position: relative;
 } 
-canvas#pondChart { max-width: 100% !important; height: auto !important; } 
+canvas#pondChart { 
+    width: 100% !important; 
+    height: 100% !important; 
+} 
 
 /* Grids */
 .mood-options { 
@@ -121,6 +126,7 @@ input[type="text"], input[type="number"], input[type="time"], select {
 .full-width { width: 100%; } 
 
 /* Progress Bar */
+.progress-wrap { display: flex; align-items: center; gap: 10px; flex: 1; }
 .progress-bar { flex: 1; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog); } 
 .progress-fill { height: 100%; background: var(--frog); width: 0%; transition: 0.5s; } 
 
@@ -132,9 +138,24 @@ input[type="text"], input[type="number"], input[type="time"], select {
 } 
 .achievement-bar.collapsed { transform: translate(-50%, calc(100% - 50px)); } 
 
+.bar-header {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.centered-controls {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .achievement-content { 
     display: grid; 
-    grid-template-columns: 1fr 1fr; /* Split into two columns */
+    grid-template-columns: 1fr 1fr; 
     gap: 15px; 
     padding: 15px; 
     max-height: 50vh; 
@@ -142,30 +163,29 @@ input[type="text"], input[type="number"], input[type="time"], select {
 } 
 
 /* Streak Card Styling */
-.streak-card {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 15px;
-    padding: 12px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    margin-bottom: 10px;
-}
-.streak-emoji { font-size: 1.5rem; }
-.streak-number { font-size: 2rem; display: block; color: var(--pink); text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+.streak-card { 
+    background: rgba(255, 255, 255, 0.15); 
+    border-radius: 15px; 
+    padding: 12px; 
+    text-align: center; 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    margin-bottom: 10px; 
+} 
+.streak-emoji { font-size: 1.5rem; } 
+.streak-number { font-size: 2rem; display: block; color: var(--pink); text-shadow: 1px 1px 2px rgba(0,0,0,0.2); } 
 
 /* History List Styling */
-.history-list div { 
-    font-size: 0.8rem; padding: 8px 0; 
-    border-bottom: 1px solid rgba(255,255,255,0.1); 
-    display: flex; justify-content: space-between; align-items: center; 
-} 
+.achieve-col h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: rgba(255,255,255,0.8); }
+.history-list div { font-size: 0.8rem; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; } 
 .history-list div button { background: none; border: none; color: white; font-size: 1.2rem; opacity: 0.5; cursor: pointer; } 
+.history-list small { color: rgba(255,255,255,0.6); font-size: 0.7rem; display: block; }
 
 /* Utilities */
 .btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 5px 8px; border-radius: 10px; font-size: 0.7rem; cursor: pointer; font-weight: bold; } 
 .count-badge { background: var(--water-blue); color: #0369a1; padding: 3px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; } 
+.date-display { color: var(--dark-frog); font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; }
 
 /* Responsive Stack */
-@media screen and (max-width: 420px) {
-    .achievement-content { grid-template-columns: 1fr; }
+@media screen and (max-width: 420px) { 
+    .achievement-content { grid-template-columns: 1fr; } 
 }
