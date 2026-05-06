@@ -61,7 +61,8 @@
         setClick('addCarbBtn', addCarb);
         setClick('clearWaterBtn', function() { pondData.waterCount = 0; saveAndRefresh(); });
         setClick('exportBtn', function() { navigator.clipboard.writeText(JSON.stringify(pondData, null, 2)).then(() => alert("Data Copied! 📋")); });
-        setClick('csvExportBtn', exportToCSV); // New CSV Export Link
+        setClick('csvExportBtn', exportToExcel); 
+        setClick('downloadChartBtn', downloadChartImage);
         setClick('bannerClose', function() { document.getElementById('motivationBar').style.display = 'none'; });
         setClick('historyToggle', function() { document.getElementById('historyFooter').classList.toggle('collapsed'); });
         
@@ -137,23 +138,90 @@
         saveAndRefresh();
     }
 
-    function exportToCSV() {
-        const rows = [["Date", "Type", "Value", "Notes"]];
-        pondData.sugarLog.forEach(s => rows.push([s.fullDate, "Glucose", s.val, "mg/dL"]));
-        pondData.carbLog.forEach(c => rows.push([c.fullDate, "Carbs", c.val, "grams"]));
-        pondData.moodLog.forEach(m => rows.push([m.fullDate, "Mood", m.val, m.icon]));
-        pondData.history.forEach(h => rows.push([h.fullDate, "Completed Hop", h.text, ""]));
-        rows.push([new Date().toLocaleDateString(), "Water Intake", pondData.waterCount, "glasses of 8"]);
-
-        let csvContent = "data:text/csv;charset=utf-8," 
-            + rows.map(e => `"${e.join('","')}"`).join("\n");
-
-        const link = document.createElement("a");
-        link.setAttribute("href", encodeURI(csvContent));
-        link.setAttribute("download", `Pond_Export_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
+    function downloadChartImage() {
+        if (!myChart) return;
+        const link = document.createElement('a');
+        link.href = myChart.toBase64Image();
+        link.download = `Pond_Trends_${new Date().toLocaleDateString()}.png`;
         link.click();
-        document.body.removeChild(link);
+    }
+
+    // New Streak Calculation Logic
+    function calculateStreak() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (!pondData.lastStreakDate) {
+            pondData.streak = 1;
+            pondData.lastStreakDate = today.toISOString();
+            return;
+        }
+
+        const lastDate = new Date(pondData.lastStreakDate);
+        lastDate.setHours(0, 0, 0, 0);
+
+        const diffTime = today - lastDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+            pondData.streak += 1;
+            pondData.lastStreakDate = today.toISOString();
+        } else if (diffDays > 1) {
+            pondData.streak = 1;
+            pondData.lastStreakDate = today.toISOString();
+        }
+        // If diffDays is 0, they already logged today; streak remains unchanged.
+    }
+
+    async function exportToExcel() {
+        if (typeof ExcelJS === 'undefined') {
+            alert("Excel library not loaded.");
+            return;
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Pond Report');
+
+        if (myChart) {
+            const chartImage = myChart.toBase64Image();
+            const imageId = workbook.addImage({ base64: chartImage, extension: 'png' });
+            worksheet.addImage(imageId, { tl: { col: 0, row: 0 }, ext: { width: 500, height: 300 } });
+        }
+
+        const headerRowIdx = 17;
+        const columns = [
+            { header: 'Date', key: 'date', width: 25 },
+            { header: 'Type', key: 'type', width: 15 },
+            { header: 'Value', key: 'val', width: 12 },
+            { header: 'Details', key: 'note', width: 30 }
+        ];
+        
+        worksheet.columns = columns;
+        const headerRow = worksheet.getRow(headerRowIdx);
+        headerRow.values = columns.map(c => c.header);
+        headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF67A36A' } };
+
+        const allLogs = [
+            ...pondData.sugarLog.map(s => ({ date: s.fullDate, type: "Glucose", val: s.val, note: "mg/dL" })),
+            ...pondData.carbLog.map(c => ({ date: c.fullDate, type: "Carbs", val: c.val, note: "grams" })),
+            ...pondData.moodLog.map(m => ({ date: m.fullDate, type: "Mood", val: m.val, note: m.icon })),
+            ...pondData.history.map(h => ({ date: h.fullDate, type: "Completed Hop", val: "", note: h.text })),
+            { date: new Date().toLocaleDateString(), type: "Water", val: pondData.waterCount, note: "Total glasses today" }
+        ].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        allLogs.forEach(log => {
+            const row = worksheet.addRow(log);
+            if (log.type === "Glucose") {
+                const valCell = row.getCell(3);
+                if (log.val > 180) valCell.font = { color: { argb: 'FFFF0000' }, bold: true };
+                else if (log.val < 80) valCell.font = { color: { argb: 'FF0000FF' }, bold: true };
+                else valCell.font = { color: { argb: 'FF008000' } };
+            }
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), `Pond_Full_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 
     window.toggleHop = function(id) {
@@ -161,6 +229,7 @@
         if (idx > -1) {
             var item = pondData.daily.splice(idx, 1)[0];
             pondData.history.push({ id: Date.now(), text: "[" + item.priority + "] " + item.text, fullDate: currentFullDate(null) });
+            calculateStreak(); // Increment streak on completion
             saveAndRefresh();
         }
     };
@@ -258,6 +327,10 @@
         document.getElementById('dailyProgress').style.width = perc + '%';
         document.getElementById('dailyProgressText').textContent = perc + '%';
         document.getElementById('waterCountText').textContent = pondData.waterCount + " / 8";
+        
+        // Update Streak Display
+        const streakEl = document.getElementById('streakDisplay');
+        if (streakEl) streakEl.textContent = pondData.streak;
 
         renderChart();
     }
