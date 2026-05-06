@@ -32,6 +32,10 @@
         setClick('resetPondBtn', () => { if(confirm("Reset today?")) { pondData.daily = []; pondData.waterCount = 0; saveAndRefresh(); } });
         setClick('clearHistoryBtn', () => { if(confirm("Delete ALL data?")) { localStorage.removeItem('ProgressPond_V23'); location.reload(); } });
 
+        // Chart View Toggle
+        var viewSelect = document.getElementById('chartViewSelect');
+        if (viewSelect) { viewSelect.onchange = renderChart; }
+
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = function() {
                 var mood = this.getAttribute('data-mood');
@@ -101,48 +105,57 @@
     function calculateStreak() {
         const today = new Date().toLocaleDateString();
         if (!pondData.lastStreakDate) return;
-        
         const lastDate = new Date(pondData.lastStreakDate);
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-
         if (pondData.lastStreakDate !== today) {
-            if (pondData.lastStreakDate === yesterday.toLocaleDateString()) {
-                // Keep streak going but don't increment until a log happens
-            } else {
-                pondData.streak = 0; // Broke streak
+            if (pondData.lastStreakDate !== yesterday.toLocaleDateString()) {
+                pondData.streak = 0;
             }
         }
     }
 
     function currentFullDate() {
         var now = new Date();
-        pondData.lastStreakDate = now.toLocaleDateString(); // Set streak date on activity
+        var datePart = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        var timePart = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        pondData.lastStreakDate = now.toLocaleDateString();
         if (pondData.streak === 0) pondData.streak = 1;
-        return now.toLocaleDateString([], { month: 'short', day: 'numeric' }) + " @ " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return datePart + " @ " + timePart;
     }
 
     function renderChart() {
         var canvas = document.getElementById('pondChart');
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
+        var view = document.getElementById('chartViewSelect') ? document.getElementById('chartViewSelect').value : 'today';
 
-        var sugarData = pondData.sugarLog.slice(-10);
-        var carbData = pondData.carbLog.slice(-10);
-        var labels = sugarData.map(s => s.fullDate.split(' @ ')[1] || s.fullDate);
+        let sugarData, carbData;
 
+        if (view === 'today') {
+            const todayStr = new Date().toLocaleDateString([], { month: 'short', day: 'numeric' });
+            sugarData = pondData.sugarLog.filter(s => s.fullDate.startsWith(todayStr));
+            carbData = pondData.carbLog.filter(c => c.fullDate.startsWith(todayStr));
+        } else {
+            sugarData = pondData.sugarLog.slice(-30);
+            carbData = pondData.carbLog.slice(-30);
+        }
+
+        const labels = sugarData.map(s => view === 'today' ? s.fullDate.split(' @ ')[1] : s.fullDate);
+        
         if (myChart) { myChart.destroy(); }
 
         myChart = new Chart(ctx, {
             data: {
-                labels: labels,
+                labels: labels.length > 0 ? labels : ["No data"],
                 datasets: [
-                    { type: 'line', label: 'Glucose', data: sugarData.map(s => s.val), borderColor: '#67a36a', tension: 0.3, yAxisID: 'y' },
+                    { type: 'line', label: 'Glucose', data: sugarData.map(s => s.val), borderColor: '#67a36a', tension: 0.3, yAxisID: 'y', fill: false },
                     { type: 'bar', label: 'Carbs', data: carbData.map(c => c.val), backgroundColor: 'rgba(125, 211, 252, 0.4)', yAxisID: 'y1' }
                 ]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: { position: 'left', title: { display: true, text: 'Glucose' } },
                     y1: { position: 'right', title: { display: true, text: 'Carbs' }, grid: { drawOnChartArea: false } }
@@ -155,7 +168,7 @@
         if (!myChart) return;
         const link = document.createElement('a');
         link.href = myChart.toBase64Image();
-        link.download = `Pond_Trends.png`;
+        link.download = `Pond_Trends_${new Date().toLocaleDateString()}.png`;
         link.click();
     }
 
@@ -165,16 +178,13 @@
     }
 
     function renderAll() {
-        // Update Streak & Progress
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
         const streakEl = document.getElementById('streakDisplay');
         if (streakEl) streakEl.textContent = pondData.streak;
 
-        // Water
         document.querySelectorAll('.drop-btn').forEach((btn, i) => i < pondData.waterCount ? btn.classList.add('active') : btn.classList.remove('active'));
         document.getElementById('waterCountText').textContent = pondData.waterCount + " / 8";
 
-        // Active Hops
         var hopsHtml = pondData.daily.map(g => `
             <li style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:white; padding:8px; border-radius:10px; border: 1px solid var(--frog);">
                 <input type="checkbox" onchange="toggleHop(${g.id})">
@@ -183,7 +193,6 @@
             </li>`).join('');
         document.getElementById('dailyList').innerHTML = hopsHtml || "No active hops...";
 
-        // Achievements (Mood/Glucose/Carbs)
         var combined = pondData.moodLog.map(m => ({...m, logType: 'mood'}))
             .concat(pondData.sugarLog.map(s => ({ id: s.id, val: "Glucose: " + s.val, icon: "🩸", fullDate: s.fullDate, logType: 'sugar' })))
             .concat(pondData.carbLog.map(c => ({ id: c.id, val: "Carbs: " + c.val + "g", icon: "🥣", fullDate: c.fullDate, logType: 'carb' })))
@@ -195,12 +204,16 @@
                 <button onclick="deleteLogItem('${m.logType}', ${m.id})" style="background:none; border:none; color:white; opacity:0.4; cursor:pointer;">×</button>
             </div>`).join('');
 
-        // Hops History
         document.getElementById('dailyHistoryList').innerHTML = pondData.history.slice().reverse().slice(0, 15).map(h => `
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding:4px 0;">
                 <div>🌿 ${h.text} <small style="display:block; opacity:0.6;">${h.fullDate}</small></div>
                 <button onclick="deleteLogItem('hop', ${h.id})" style="background:none; border:none; color:white; opacity:0.4; cursor:pointer;">×</button>
             </div>`).join('');
+
+        var total = pondData.daily.length + pondData.history.length;
+        var perc = (total ? Math.round((pondData.history.length / total) * 100) : 0);
+        document.getElementById('dailyProgress').style.width = perc + '%';
+        document.getElementById('dailyProgressText').textContent = perc + '%';
 
         renderChart();
     }
