@@ -25,10 +25,10 @@
         "💕 🐸 Stay hydrated and stay happy! 🐸 💕",
         "🐸 💗 You are the best frog in the pond! ✨ 🐸",
         "🐸 ✨ Leap into happiness! ✨ 🐸",
-        "🐸 ☀%EF%B8%8F Don't worry, be hoppy! ☀%EF%B8%8F 🐸",
+        "🐸 Don't worry, be hoppy! 🐸",
         "🐸 💖 Feeling totally un-frog-gettable today! 💖 🐸",
         "🌿 🐸 Just a little frog in a big, beautiful pond. 🐸 🌿",
-        "☀%EF%B8%8F 💧 Enjoying the simple things! 🐸 💧 ☀%EF%B8%8F",
+        "🐸 💧 Enjoying the simple things! 🐸 💧",
         "🐸 😎 Toad-ally awesome! 😎 🐸",
         "🐸 🌈 Keep calm and leap on! 🌈 🐸",
         "🌊 🐸 Every day is a good day to make a splash! 🐸 🌊"
@@ -54,7 +54,6 @@
         setClick('addSugarBtn', addSugar);
         setClick('addCarbBtn', addCarb);
         setClick('clearWaterBtn', function() { pondData.waterCount = 0; saveAndRefresh(); });
-        setClick('exportBtn', function() { navigator.clipboard.writeText(JSON.stringify(pondData, null, 2)).then(() => alert("Copied! 📋")); });
         setClick('bannerClose', function() { document.getElementById('motivationBar').style.display = 'none'; });
         setClick('historyToggle', function() { document.getElementById('historyFooter').classList.toggle('collapsed'); });
         
