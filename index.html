@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- 1. ADDED CHART.JS LIBRARY HERE -->
+    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
     <!-- Motivation Banner -->
@@ -20,6 +23,14 @@
         </header>
 
         <main class="main-stack">
+            <!-- 2. ADDED TREND GRAPH SECTION HERE -->
+            <section class="pond-card" style="min-height: 300px;">
+                <h2>Pond Trends 📈</h2>
+                <div style="height: 250px; width: 100%;">
+                    <canvas id="healthChart"></canvas>
+                </div>
+            </section>
+
             <!-- Mood Tracker -->
             <section class="pond-card">
                 <h2>How are you feeling? 🐸</h2>
@@ -116,6 +127,7 @@
             </div>
         </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
