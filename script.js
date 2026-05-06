@@ -120,7 +120,7 @@
         var input = document.getElementById('sugarInput');
         var val = parseInt(input.value);
         if (!val) return;
-        var color = (val < 70 || val > 250) ? "#ff4d4d" : (val > 180 ? "#ffa500" : (val < 80 ? "#7dd3fc" : "#67a36a"));
+        var color = (val < 70 || val > 250) ? "#ff4d4d" : (val > 180 ? "#ffa500" : (val < 80 ? "#7dd3fc" : "#2d5a27"));
         pondData.sugarLog.push({ id: Date.now(), type: 'sugar', val: val, color: color, fullDate: currentFullDate(document.getElementById('manualTimeInput').value) });
         input.value = "";
         saveAndRefresh();
