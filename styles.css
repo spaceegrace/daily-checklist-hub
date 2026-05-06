@@ -68,19 +68,20 @@ body {
 .header h1 { color: var(--dark-frog); margin: 10px 0; } 
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; } 
 
-/* Chart/Visualization - STABILIZED HEIGHT */
+/* Chart/Visualization - STABILIZED */
 .chart-container { 
     background: white; 
     border-radius: 12px; 
     padding: 10px; 
     border: 1px solid var(--frog); 
     margin-top: 10px; 
-    height: 250px; /* Crucial: Prevents graph from collapsing or infinite loading */
-    position: relative;
-    width: 100%;
+    height: 250px; 
+    position: relative; 
+    width: 100%; 
 } 
+
 canvas#pondChart { 
-    display: block;
+    display: block; 
     width: 100% !important; 
     height: 100% !important; 
 } 
@@ -91,9 +92,9 @@ canvas#pondChart {
     padding: 4px 8px; 
     background: white; 
     border: 2px solid var(--frog); 
-    border-radius: 8px;
+    border-radius: 8px; 
     cursor: pointer; 
-    color: var(--txt);
+    color: var(--txt); 
 } 
 
 /* Grids & Buttons */
@@ -121,6 +122,7 @@ canvas#pondChart {
     display: flex; align-items: center; justify-content: center; 
     transition: 0.2s; 
 } 
+
 .drop-btn { filter: grayscale(100%) opacity(0.3); } 
 .drop-btn.active { 
     filter: grayscale(0%) opacity(1) !important; 
@@ -135,9 +137,26 @@ canvas#pondChart {
     width: 100%; max-width: 600px; background: var(--dark-frog); 
     color: white; border-radius: 20px 20px 0 0; z-index: 1200; transition: 0.3s; 
 } 
-.achievement-bar.collapsed { transform: translate(-50%, calc(100% - 50px)); } 
 
-.centered-controls { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; padding: 10px; } 
+.achievement-bar.collapsed { 
+    transform: translate(-50%, calc(100% - 50px)); 
+} 
+
+.bar-header { 
+    height: 50px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+} 
+
+.centered-controls { 
+    display: flex; 
+    gap: 5px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    padding: 10px; 
+} 
 
 .achievement-content { 
     display: grid; 
@@ -155,18 +174,43 @@ canvas#pondChart {
     padding: 12px; 
     text-align: center; 
     border: 1px solid rgba(255, 255, 255, 0.3); 
+    margin-bottom: 10px;
 } 
-.streak-number { font-size: 2rem; display: block; color: var(--pink); font-weight: bold; } 
 
-/* History Lists - OPTIMIZED FOR LARGE DATA */
+.streak-number { 
+    font-size: 2rem; 
+    display: block; 
+    color: var(--pink); 
+    font-weight: bold; 
+} 
+
+/* History Lists */
+.achieve-col h4 { 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    margin-bottom: 8px; 
+    color: rgba(255,255,255,0.8); 
+}
+
 .history-list div { 
     font-size: 0.8rem; 
     padding: 8px 0; 
     border-bottom: 1px solid rgba(255,255,255,0.1); 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 } 
+
+.history-list small {
+    display: block;
+    opacity: 0.7;
+    font-size: 0.7rem;
+}
+
+/* Utilities */
+.btn-util { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 5px 8px; border-radius: 10px; font-size: 0.7rem; cursor: pointer; font-weight: bold; } 
+.count-badge { background: var(--water-blue); color: #0369a1; padding: 3px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; } 
 
 /* Mobile Optimization */
 @media screen and (max-width: 420px) { 
