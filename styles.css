@@ -66,22 +66,28 @@ body {
 
 .header { text-align: center; } 
 .header h1 { color: var(--dark-frog); margin: 10px 0; } 
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; } 
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; } 
 
-/* Chart/Visualization - Fixed for responsiveness */
+/* Chart/Visualization */
 .chart-container { 
     background: white; 
     border-radius: 12px; 
     padding: 10px; 
     border: 1px solid var(--frog); 
-    margin-top: 10px;
-    height: 250px; /* Gives the graph a stable height */
-    position: relative;
+    margin-top: 10px; 
+    height: 250px; 
+    position: relative; 
 } 
-canvas#pondChart { 
-    width: 100% !important; 
-    height: 100% !important; 
-} 
+canvas#pondChart { width: 100% !important; height: 100% !important; } 
+
+/* View Selector Dropdown */
+#chartViewSelect {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    background: white;
+    border-color: var(--frog);
+    cursor: pointer;
+}
 
 /* Grids */
 .mood-options { 
@@ -130,7 +136,7 @@ input[type="text"], input[type="number"], input[type="time"], select {
 .progress-bar { flex: 1; height: 10px; background: #e0f2e1; border-radius: 10px; overflow: hidden; border: 1px solid var(--frog); } 
 .progress-fill { height: 100%; background: var(--frog); width: 0%; transition: 0.5s; } 
 
-/* Achievement Footer & Columns */
+/* Achievement Footer */
 .achievement-bar { 
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
     width: 100%; max-width: 600px; background: var(--dark-frog); 
@@ -138,20 +144,8 @@ input[type="text"], input[type="number"], input[type="time"], select {
 } 
 .achievement-bar.collapsed { transform: translate(-50%, calc(100% - 50px)); } 
 
-.bar-header {
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.centered-controls {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
+.bar-header { height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; } 
+.centered-controls { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; padding: 0 10px; } 
 
 .achievement-content { 
     display: grid; 
@@ -162,7 +156,7 @@ input[type="text"], input[type="number"], input[type="time"], select {
     overflow-y: auto; 
 } 
 
-/* Streak Card Styling */
+/* Streak Card */
 .streak-card { 
     background: rgba(255, 255, 255, 0.15); 
     border-radius: 15px; 
@@ -174,8 +168,8 @@ input[type="text"], input[type="number"], input[type="time"], select {
 .streak-emoji { font-size: 1.5rem; } 
 .streak-number { font-size: 2rem; display: block; color: var(--pink); text-shadow: 1px 1px 2px rgba(0,0,0,0.2); } 
 
-/* History List Styling */
-.achieve-col h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: rgba(255,255,255,0.8); }
+/* History Lists */
+.achieve-col h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: rgba(255,255,255,0.8); } 
 .history-list div { font-size: 0.8rem; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; } 
 .history-list div button { background: none; border: none; color: white; font-size: 1.2rem; opacity: 0.5; cursor: pointer; } 
 .history-list small { color: rgba(255,255,255,0.6); font-size: 0.7rem; display: block; }
@@ -185,7 +179,8 @@ input[type="text"], input[type="number"], input[type="time"], select {
 .count-badge { background: var(--water-blue); color: #0369a1; padding: 3px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; } 
 .date-display { color: var(--dark-frog); font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; }
 
-/* Responsive Stack */
+/* Mobile Optimization */
 @media screen and (max-width: 420px) { 
     .achievement-content { grid-template-columns: 1fr; } 
+    .chart-container { height: 200px; }
 }
