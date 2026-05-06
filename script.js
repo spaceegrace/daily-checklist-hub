@@ -4,12 +4,11 @@
     var frogQuotes = [ "🐸 💖 Ribbit! You're doing amazing! 💞 🐸", "✨ 🐸 Take a deep breath, little froggy! 💗 ✨", "🌸 🐸 Every hop counts! I'm proud of you! 💖 🌸", "💕 🐸 Stay hydrated and stay happy! 🐸 💕", "🐸 💗 You are the best frog in the pond! ✨ 🐸", "🐸 ✨ Leap into happiness! ✨ 🐸", "🐸 ☀️ Don't worry, be hoppy! ☀️ 🐸", "🐸 💖 Feeling totally un-frog-gettable today! 💖 🐸", "🌿 🐸 Just a little frog in a big, beautiful pond. 🐸 🌿", "☀️ 💧 Enjoying the simple things! 🐸 💧 ☀️", "🐸 😎 Toads-ally awesome! 😎 🐸", "🐸 🌈 Keep calm and leap on! 🌈 🐸", "🌊 🐸 Every day is a good day to make a splash! 🐸 🌊" ]; 
 
     window.onload = function() { 
-        var saved = localStorage.getItem('ProgressPond_V22'); 
+        var saved = localStorage.getItem('ProgressPond_V23'); 
         if (saved) { try { var parsed = JSON.parse(saved); for (var key in parsed) { pondData[key] = parsed[key]; } } catch(e) {} } 
 
         document.getElementById('motivationText').textContent = frogQuotes[Math.floor(Math.random() * frogQuotes.length)]; 
-        var now = new Date(); 
-        document.getElementById('manualTimeInput').value = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0'); 
+        resetTimePicker();
 
         function setClick(id, fn) { var el = document.getElementById(id); if (el) el.onclick = fn; } 
 
@@ -17,7 +16,6 @@
         setClick('addSugarBtn', addSugar); 
         setClick('addCarbBtn', addCarb); 
         
-        // New: Water Clear Button
         setClick('clearWaterBtn', function() {
             pondData.waterCount = 0;
             saveAndRefresh();
@@ -27,12 +25,20 @@
         setClick('bannerClose', function() { document.getElementById('motivationBar').style.display = 'none'; }); 
         setClick('historyToggle', function() { document.getElementById('historyFooter').classList.toggle('collapsed'); }); 
         
-        setClick('resetPondBtn', function() { if (confirm("Reset today?")) { pondData.daily = []; pondData.waterCount = 0; saveAndRefresh(); } }); 
-        setClick('clearHistoryBtn', function() { if (confirm("Delete ALL data?")) { localStorage.removeItem('ProgressPond_V22'); location.reload(); } }); 
+        setClick('resetPondBtn', function() { 
+            if (confirm("Reset today?")) { 
+                pondData.daily = []; 
+                pondData.waterCount = 0; 
+                resetTimePicker(); // Added per request
+                saveAndRefresh(); 
+            } 
+        }); 
+
+        setClick('clearHistoryBtn', function() { if (confirm("Delete ALL data?")) { localStorage.removeItem('ProgressPond_V23'); location.reload(); } }); 
 
         document.querySelectorAll('.mood-btn').forEach(btn => { 
             btn.onclick = function() { 
-                pondData.moodLog.push({ val: this.getAttribute('data-mood'), icon: moodEmojis[this.getAttribute('data-mood')], fullDate: currentFullDate(document.getElementById('manualTimeInput').value) }); 
+                pondData.moodLog.push({ id: Date.now(), type: 'mood', val: this.getAttribute('data-mood'), icon: moodEmojis[this.getAttribute('data-mood')], fullDate: currentFullDate(document.getElementById('manualTimeInput').value) }); 
                 saveAndRefresh(); 
             }; 
         }); 
@@ -40,14 +46,18 @@
         document.querySelectorAll('.drop-btn').forEach((btn, index) => { 
             btn.onclick = function() { 
                 pondData.waterCount = index + 1; 
-                // WATER LOG: Uses real-time (null) instead of manualTimeInput
-                pondData.moodLog.push({ val: "Drank Water", icon: "💧", fullDate: currentFullDate(null) }); 
+                pondData.moodLog.push({ id: Date.now(), type: 'water', val: "Drank Water", icon: "💧", fullDate: currentFullDate(null) }); 
                 saveAndRefresh(); 
             }; 
         }); 
 
         renderAll(); 
     }; 
+
+    function resetTimePicker() {
+        var now = new Date(); 
+        document.getElementById('manualTimeInput').value = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0'); 
+    }
 
     function addHop() { 
         var input = document.getElementById('dailyInput'); 
@@ -62,15 +72,16 @@
         var val = parseInt(input.value); 
         if (!val) return; 
         var color = (val < 70 || val > 250) ? "#ff4d4d" : (val > 180 ? "#ffa500" : (val < 80 ? "#7dd3fc" : "#67a36a")); 
-        pondData.sugarLog.push({ val: val, color: color, fullDate: currentFullDate(document.getElementById('manualTimeInput').value) }); 
+        pondData.sugarLog.push({ id: Date.now(), type: 'sugar', val: val, color: color, fullDate: currentFullDate(document.getElementById('manualTimeInput').value) }); 
         input.value = ""; 
         saveAndRefresh(); 
     } 
 
     function addCarb() { 
         var input = document.getElementById('carbInput'); 
-        if (!parseInt(input.value)) return; 
-        pondData.carbLog.push({ val: input.value, fullDate: currentFullDate(document.getElementById('manualTimeInput').value) }); 
+        var val = parseInt(input.value);
+        if (!val) return; 
+        pondData.carbLog.push({ id: Date.now(), type: 'carb', val: val, fullDate: currentFullDate(document.getElementById('manualTimeInput').value) }); 
         input.value = ""; 
         saveAndRefresh(); 
     } 
@@ -79,10 +90,21 @@
         var idx = pondData.daily.findIndex(g => g.id === id); 
         if (idx > -1) { 
             var item = pondData.daily.splice(idx, 1)[0]; 
-            pondData.history.push({ text: "[" + item.priority + "] " + item.text, fullDate: currentFullDate(null) }); 
+            pondData.history.push({ id: Date.now(), text: "[" + item.priority + "] " + item.text, fullDate: currentFullDate(null) }); 
             saveAndRefresh(); 
         } 
     }; 
+
+    // Deletes items from the Achievement Logs
+    window.deleteLogItem = function(type, id) {
+        if (confirm("Delete this log entry?")) {
+            if (type === 'hop') pondData.history = pondData.history.filter(h => h.id !== id);
+            if (type === 'mood') pondData.moodLog = pondData.moodLog.filter(m => m.id !== id);
+            if (type === 'sugar') pondData.sugarLog = pondData.sugarLog.filter(s => s.id !== id);
+            if (type === 'carb') pondData.carbLog = pondData.carbLog.filter(c => c.id !== id);
+            saveAndRefresh();
+        }
+    };
 
     window.deleteHop = function(id) { 
         pondData.daily = pondData.daily.filter(g => g.id !== id); 
@@ -96,7 +118,7 @@
     } 
 
     function saveAndRefresh() { 
-        localStorage.setItem('ProgressPond_V22', JSON.stringify(pondData)); 
+        localStorage.setItem('ProgressPond_V23', JSON.stringify(pondData)); 
         renderAll(); 
     } 
 
@@ -111,13 +133,23 @@
         } 
         document.getElementById('dailyList').innerHTML = listHtml || "No active hops..."; 
 
-        var combined = pondData.moodLog.concat( 
-            pondData.sugarLog.map(s => ({ val: "Glucose: " + s.val, icon: "🩸", fullDate: s.fullDate, color: s.color })), 
-            pondData.carbLog.map(c => ({ val: "Carbs: " + c.val + "g", icon: "🥣", fullDate: c.fullDate })) 
-        ).sort((a, b) => new Date(b.fullDate.split(' @ ')[0]) - new Date(a.fullDate.split(' @ ')[0])); 
+        // Sorting Combined Logs
+        var combined = pondData.moodLog.map(m => ({...m, logType: 'mood'}))
+            .concat(pondData.sugarLog.map(s => ({ id: s.id, val: "Glucose: " + s.val, icon: "🩸", fullDate: s.fullDate, color: s.color, logType: 'sugar' })))
+            .concat(pondData.carbLog.map(c => ({ id: c.id, val: "Carbs: " + c.val + "g", icon: "🥣", fullDate: c.fullDate, logType: 'carb' })))
+            .sort((a, b) => b.id - a.id); 
 
-        document.getElementById('moodHistoryList').innerHTML = combined.slice(0, 15).reverse().map(m => `<div><span style="color:${m.color || 'white'}">${m.icon} ${m.val}</span> <small>${m.fullDate}</small></div>`).join(''); 
-        document.getElementById('dailyHistoryList').innerHTML = pondData.history.slice().reverse().slice(0, 10).map(h => `<div>🌿 ${h.text} <small>${h.fullDate}</small></div>`).join(''); 
+        document.getElementById('moodHistoryList').innerHTML = combined.slice(0, 20).map(m => `
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding:4px 0;">
+                <div><span style="color:${m.color || 'white'}">${m.icon} ${m.val}</span> <small style="display:block; opacity:0.6;">${m.fullDate}</small></div>
+                <button onclick="deleteLogItem('${m.logType}', ${m.id})" style="background:none; border:none; color:white; opacity:0.4; cursor:pointer;">×</button>
+            </div>`).join(''); 
+
+        document.getElementById('dailyHistoryList').innerHTML = pondData.history.slice().reverse().slice(0, 15).map(h => `
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding:4px 0;">
+                <div>🌿 ${h.text} <small style="display:block; opacity:0.6;">${h.fullDate}</small></div>
+                <button onclick="deleteLogItem('hop', ${h.id})" style="background:none; border:none; color:white; opacity:0.4; cursor:pointer;">×</button>
+            </div>`).join(''); 
         
         var total = pondData.daily.length + pondData.history.length; 
         document.getElementById('dailyProgress').style.width = (total ? Math.round((pondData.history.length / total) * 100) : 0) + '%'; 
