@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- FIXED: Full path to Chart.js for the trends graph to work -->
+    <!-- Corrected Chart.js Library Link -->
     <script src="https://jsdelivr.net"></script>
 </head>
 <body>
-    <!-- Motivation Banner -->
     <div id="motivationBar" class="motivation-bar">
         <span id="motivationText"></span>
-        <button id="bannerClose" class="btn-close-banner" aria-label="Dismiss">×</button>
+        <button id="bannerClose" class="btn-close-banner">×</button>
     </div>
 
     <div class="container">
@@ -64,7 +63,7 @@
                         <option value="week">7 Days</option>
                     </select>
                 </div>
-                <div class="chart-container" style="height: 250px; position: relative;">
+                <div class="chart-container">
                     <canvas id="pondChart"></canvas>
                 </div>
                 <button id="downloadChartBtn" class="btn-pond full-width" style="margin-top: 10px;">Download Graph 🖼️</button>
@@ -76,7 +75,7 @@
                     <h2>Hydration 💧</h2>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span id="waterCountText" class="count-badge">0 / 8</span>
-                        <button id="clearWaterBtn" class="btn-util" style="background: var(--pink); border: 1px solid white; color: white;">Clear</button>
+                        <button id="clearWaterBtn" class="btn-util">Clear</button>
                     </div>
                 </div>
                 <div class="droplet-container">
@@ -98,7 +97,7 @@
                 </div>
                 <div class="input-stack">
                     <div class="input-row">
-                        <input type="text" id="dailyInput" placeholder="Next hop..." autocomplete="off">
+                        <input type="text" id="dailyInput" placeholder="Next hop...">
                         <select id="priorityInput" class="priority-select">
                             <option value="Low">Low 🌱</option>
                             <option value="Medium" selected>Med 🌿</option>
@@ -112,7 +111,6 @@
         </main>
     </div>
 
-    <!-- Achievement Bar -->
     <footer id="historyFooter" class="achievement-bar collapsed">
         <div class="bar-header">
             <div class="centered-controls">
@@ -123,12 +121,10 @@
             </div>
         </div>
         <div class="achievement-content">
-            <!-- Column 1: History -->
             <div class="achieve-col">
                 <h4>Hops History</h4>
                 <div id="dailyHistoryList" class="history-list"></div>
             </div>
-            <!-- Column 2: Stats & Streak -->
             <div class="achieve-col">
                 <h4>Pond Stats</h4>
                 <div class="streak-card">
@@ -136,7 +132,7 @@
                     <strong class="streak-number" id="streakDisplay">0</strong>
                     <small>Day Streak</small>
                 </div>
-                <div id="moodHistoryList" class="history-list" style="margin-top: 15px;"></div>
+                <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
     </footer>
