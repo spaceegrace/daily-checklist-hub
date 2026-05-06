@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Progress Pond V23 🐸</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- 1. Added Chart.js Library -->
+    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
     <!-- Motivation Banner -->
@@ -50,6 +52,14 @@
                 <div class="input-row">
                     <input type="number" id="carbInput" placeholder="Grams carbs">
                     <button id="addCarbBtn" class="btn-pond">Log Carbs</button>
+                </div>
+            </section>
+
+            <!-- 2. Added Visualization Card -->
+            <section class="pond-card">
+                <h2>Pond Trends 📊</h2>
+                <div class="chart-container">
+                    <canvas id="pondChart"></canvas>
                 </div>
             </section>
 
@@ -101,6 +111,8 @@
             <div class="centered-controls">
                 <button id="historyToggle" class="btn-util">Achievements ▼</button>
                 <button id="exportBtn" class="btn-util">Copy 📋</button>
+                <!-- 3. Added CSV Export Button -->
+                <button id="csvExportBtn" class="btn-util">Excel 📊</button>
                 <button id="clearHistoryBtn" class="btn-util">Clear All</button>
                 <button id="resetPondBtn" class="btn-util">Reset Day</button>
             </div>
@@ -108,19 +120,14 @@
         <div class="achievement-content">
             <div class="achieve-col">
                 <h4>Hops History</h4>
-                <div id="dailyHistoryList" class="history-list">
-                    <!-- JavaScript will inject deletable items here -->
-                </div>
+                <div id="dailyHistoryList" class="history-list"></div>
             </div>
             <div class="achieve-col">
                 <h4>Health & Mood Log</h4>
-                <div id="moodHistoryList" class="history-list">
-                    <!-- JavaScript will inject deletable items here -->
-                </div>
+                <div id="moodHistoryList" class="history-list"></div>
             </div>
         </div>
     </footer>
-
     <script src="script.js"></script>
 </body>
 </html>
