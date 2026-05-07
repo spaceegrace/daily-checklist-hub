@@ -191,36 +191,7 @@
         const totalCarbs = pondData.daily.filter(d => d.type === 'carb').reduce((sum, item) => sum + (item.amount || 0), 0);
         const totalHops = pondData.daily.filter(d => d.type === 'hop').reduce((sum, item) => sum + (item.amount || 0), 0);
 
-        // 3. Add the Summary Section (Starts below the graph at Row 22)
-        const startRow = 23;
-    
-        // Header for Summary
-        const summaryHeader = worksheet.getRow(startRow);
-        summaryHeader.getCell(2).value = "DAILY STATISTICS SUMMARY";
-        summaryHeader.getCell(2).font = { bold: true, size: 14 };
-    
-        // Add Summary Rows
-        const stats = [
-            ['Total Water Count', pondData.waterCount + " Glasses"],
-            ['Total Carbs Consumed', pondData.carbLog + " units"],
-            ['Total Activity (Hops)', pondData.daily.length + " units"],
-            ['Report Generated', new Date().toLocaleString()]
-        ];
-
-        stats.forEach((stat, index) => {
-            const row = worksheet.getRow(startRow + 2 + index);
-            row.getCell(2).value = stat[0]; // Label
-            row.getCell(3).value = stat[1]; // Value
-        
-            // Add styling to labels
-            row.getCell(2).font = { bold: true };
-            row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
-        });
-
-        // 4. Clean up: Set column widths for the summary text
-        worksheet.getColumn(2).width = 30;
-       worksheet.getColumn(3).width = 25;
-
+       
         // 5. Save the file
         const buffer = await workbook.xlsx.writeBuffer();
         saveAs(new Blob([buffer]), `Daily_Summary_${new Date().toISOString().slice(0,10)}.xlsx`);
