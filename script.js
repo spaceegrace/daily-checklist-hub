@@ -170,52 +170,61 @@
     }
     async function exportToExcel() {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Daily Progress');
+        const worksheet = workbook.addWorksheet('Production Stats');
 
-        // 1. Define Columns with Formatting
-        worksheet.columns = [
-            { header: 'Time', key: 'time', width: 15 },
-            { header: 'Type', key: 'type', width: 15 },
-            { header: 'Value', key: 'value', width: 10, style: { alignment: { horizontal: 'center' } } },
-            { header: 'Water Count', key: 'water', width: 12 }
+        // 1. Setup Columns with precise widths and formatting
+       worksheet.columns = [
+            { header: 'TIMESTAMP', key: 'time', width: 22 },
+            { header: 'CATEGORY', key: 'type', width: 15 },
+            { header: 'UNIT VALUE', key: 'value', width: 12, style: { numFmt: '#,##0.00' } },
+            { header: 'DAILY TOTAL', key: 'total', width: 15 }
         ];
 
-        // Style the header row (Row 1)
-        worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        worksheet.getRow(1).fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF4472C4' } // Dark blue background
-        };
-
-        // 2. Add Your Data
-        pondData.daily.forEach(item => {
-            worksheet.addRow({
-               time: item.time || new Date().toLocaleTimeString(), // Fallback if time missing
-                type: item.type,
-                value: item.amount || '-',
-                water: pondData.waterCount
-            });
+        // 2. Styling: Professional Header (Dark Slate & White Text)
+      const headerRow = worksheet.getRow(1);
+        headerRow.height = 25;
+        headerRow.eachCell((cell) => {
+            cell.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2C3E50' } };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            cell.border = { bottom: { style: 'thick', color: { argb: 'FF000000' } } };
         });
 
-        // 3. Capture and Add the Graph
-        const canvas = document.querySelector('canvas');
-        if (canvas) {
-            const imageId = workbook.addImage({
-               base64: canvas.toDataURL('image/png'),
-               extension: 'png',
+        // 3. Add Data with Conditional Formatting logic
+        pondData.daily.forEach((item, index) => {
+            const row = worksheet.addRow({
+                time: item.time || new Date().toLocaleString(),
+                type: item.type.toUpperCase(),
+                value: item.amount || 0,
+                total: { formula: `SUM($C$2:C${index + 2})` } // Running total formula
             });
 
-            // Position graph starting at Column F
+            // Alternating Row Colors (Zebra Striping)
+            if (index % 2 === 0) {
+                row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9F9F9' } };
+            }
+        });
+
+        // 4. Add the Graph (Shifted to the right for clear view)
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+           const imageId = workbook.addImage({
+                base64: canvas.toDataURL('image/png'),
+                extension: 'png',
+            });
+
             worksheet.addImage(imageId, {
                 tl: { col: 5, row: 1 }, 
-                ext: { width: 600, height: 350 }
+                ext: { width: 700, height: 400 },
+                editAs: 'oneCell' // Keeps the image from stretching if cells are resized
             });
         }
 
-        // 4. Download File
+        // 5. Final Protection & Auto-Filters
+        worksheet.autoFilter = 'A1:D1'; // Adds filter arrows to headers
+    
         const buffer = await workbook.xlsx.writeBuffer();
-        saveAs(new Blob([buffer]), `Pond_Export_${new Date().toLocaleDateString()}.xlsx`);
+        saveAs(new Blob([buffer]), `Production_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
     // 5. Main Render Function
