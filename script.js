@@ -170,62 +170,61 @@
     }
     async function exportToExcel() {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Production Stats');
+        const worksheet = workbook.addWorksheet('Daily Summary');
 
-        // 1. Setup Columns with precise widths and formatting
-       worksheet.columns = [
-            { header: 'TIMESTAMP', key: 'time', width: 22 },
-            { header: 'CATEGORY', key: 'type', width: 15 },
-            { header: 'UNIT VALUE', key: 'value', width: 12, style: { numFmt: '#,##0.00' } },
-            { header: 'DAILY TOTAL', key: 'total', width: 15 }
-        ];
-
-        // 2. Styling: Professional Header (Dark Slate & White Text)
-      const headerRow = worksheet.getRow(1);
-        headerRow.height = 25;
-        headerRow.eachCell((cell) => {
-            cell.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2C3E50' } };
-            cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            cell.border = { bottom: { style: 'thick', color: { argb: 'FF000000' } } };
-        });
-
-        // 3. Add Data with Conditional Formatting logic
-        pondData.daily.forEach((item, index) => {
-            const row = worksheet.addRow({
-                time: item.time || new Date().toLocaleString(),
-                type: item.type.toUpperCase(),
-                value: item.amount || 0,
-                total: { formula: `SUM($C$2:C${index + 2})` } // Running total formula
-            });
-
-            // Alternating Row Colors (Zebra Striping)
-            if (index % 2 === 0) {
-                row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9F9F9' } };
-            }
-        });
-
-        // 4. Add the Graph (Shifted to the right for clear view)
+        // 1. Capture and Add the Graph (Positioned at the Top)
         const canvas = document.querySelector('canvas');
         if (canvas) {
-           const imageId = workbook.addImage({
+            const imageId = workbook.addImage({
                 base64: canvas.toDataURL('image/png'),
                 extension: 'png',
             });
 
+            // Place the graph in the top-left (Cell B2)
             worksheet.addImage(imageId, {
-                tl: { col: 5, row: 1 }, 
-                ext: { width: 700, height: 400 },
-                editAs: 'oneCell' // Keeps the image from stretching if cells are resized
+                tl: { col: 1, row: 1 }, 
+                ext: { width: 800, height: 400 }
             });
         }
 
-        // 5. Final Protection & Auto-Filters
-        worksheet.autoFilter = 'A1:D1'; // Adds filter arrows to headers
+        // 2. Prepare Summary Data (Logic to calculate totals)
+        const totalCarbs = pondData.daily.filter(d => d.type === 'carb').reduce((sum, item) => sum + (item.amount || 0), 0);
+        const totalHops = pondData.daily.filter(d => d.type === 'hop').reduce((sum, item) => sum + (item.amount || 0), 0);
+
+        // 3. Add the Summary Section (Starts below the graph at Row 22)
+        const startRow = 23;
     
+        // Header for Summary
+        const summaryHeader = worksheet.getRow(startRow);
+        summaryHeader.getCell(2).value = "DAILY STATISTICS SUMMARY";
+        summaryHeader.getCell(2).font = { bold: true, size: 14 };
+    
+        // Add Summary Rows
+        const stats = [
+            ['Total Water Count', pondData.waterCount + " Glasses"],
+            ['Total Carbs Consumed', totalCarbs + " units"],
+            ['Total Activity (Hops)', totalHops + " units"],
+            ['Report Generated', new Date().toLocaleString()]
+        ];
+
+        stats.forEach((stat, index) => {
+            const row = worksheet.getRow(startRow + 2 + index);
+            row.getCell(2).value = stat[0]; // Label
+            row.getCell(3).value = stat[1]; // Value
+        
+            // Add styling to labels
+            row.getCell(2).font = { bold: true };
+            row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+        });
+
+        // 4. Clean up: Set column widths for the summary text
+        worksheet.getColumn(2).width = 30;
+       worksheet.getColumn(3).width = 25;
+
+        // 5. Save the file
         const buffer = await workbook.xlsx.writeBuffer();
-        saveAs(new Blob([buffer]), `Production_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
-    }
+        saveAs(new Blob([buffer]), `Daily_Summary_${new Date().toISOString().slice(0,10)}.xlsx`);
+     }
 
     // 5. Main Render Function
     function renderAll() {
