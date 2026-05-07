@@ -56,7 +56,9 @@
         setClick('clearWaterBtn', function() { pondData.waterCount = 0; saveAndRefresh(); });
         setClick('bannerClose', function() { document.getElementById('motivationBar').style.display = 'none'; });
         setClick('historyToggle', function() { document.getElementById('historyFooter').classList.toggle('collapsed'); });
-        
+
+                // --- Paste this with your existing button setup ---
+        setClick('exportExcelBtn', exportToExcel); 
         setClick('resetPondBtn', function() { if (confirm("Reset today?")) { pondData.daily = []; pondData.waterCount = 0; resetTimePicker(); saveAndRefresh(); } });
         setClick('clearHistoryBtn', function() { if (confirm("Delete ALL data?")) { localStorage.removeItem('ProgressPond_V23'); location.reload(); } });
 
@@ -165,6 +167,55 @@
     function saveAndRefresh() {
         localStorage.setItem('ProgressPond_V23', JSON.stringify(pondData));
         renderAll();
+    }
+    async function exportToExcel() {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Daily Progress');
+
+        // 1. Define Columns with Formatting
+        worksheet.columns = [
+            { header: 'Time', key: 'time', width: 15 },
+            { header: 'Type', key: 'type', width: 15 },
+            { header: 'Value', key: 'value', width: 10, style: { alignment: { horizontal: 'center' } } },
+            { header: 'Water Count', key: 'water', width: 12 }
+        ];
+
+        // Style the header row (Row 1)
+        worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        worksheet.getRow(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF4472C4' } // Dark blue background
+        };
+
+        // 2. Add Your Data
+        pondData.daily.forEach(item => {
+            worksheet.addRow({
+               time: item.time || new Date().toLocaleTimeString(), // Fallback if time missing
+                type: item.type,
+                value: item.amount || '-',
+                water: pondData.waterCount
+            });
+        });
+
+        // 3. Capture and Add the Graph
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            const imageId = workbook.addImage({
+               base64: canvas.toDataURL('image/png'),
+               extension: 'png',
+            });
+
+            // Position graph starting at Column F
+            worksheet.addImage(imageId, {
+                tl: { col: 5, row: 1 }, 
+                ext: { width: 600, height: 350 }
+            });
+        }
+
+        // 4. Download File
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), `Pond_Export_${new Date().toLocaleDateString()}.xlsx`);
     }
 
     // 5. Main Render Function
