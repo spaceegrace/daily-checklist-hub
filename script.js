@@ -202,8 +202,8 @@
         // Add Summary Rows
         const stats = [
             ['Total Water Count', pondData.waterCount + " Glasses"],
-            ['Total Carbs Consumed', totalCarbs + " units"],
-            ['Total Activity (Hops)', totalHops + " units"],
+            ['Total Carbs Consumed', pondData.carbLog + " units"],
+            ['Total Activity (Hops)', pondData.daily.length + " units"],
             ['Report Generated', new Date().toLocaleString()]
         ];
 
